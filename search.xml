@@ -73,4 +73,177 @@
         <tag>hexo</tag>
       </tags>
   </entry>
+  <entry>
+    <title>TCP/IP 协议栈的分层结构</title>
+    <url>/2025/07/26/TCP-IP-%E5%8D%8F%E8%AE%AE%E6%A0%88%E7%9A%84%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/</url>
+    <content><![CDATA[<p>TCP&#x2F;IP 协议栈</p>
+<p>TCP&#x2F;IP 协议栈是互联网的核心通信框架，它定义了计算机之间如何通过网络进行数据传输的一系列规则。这个协议栈采用分层结构设计，将复杂的网络通信过程分解为多个独立的功能层，每层专注于特定任务，并通过接口与上下层协作。</p>
+<h3 id="TCP-IP-协议栈的分层结构（4-层模型）"><a href="#TCP-IP-协议栈的分层结构（4-层模型）" class="headerlink" title="TCP&#x2F;IP 协议栈的分层结构（4 层模型）"></a>TCP&#x2F;IP 协议栈的分层结构（4 层模型）</h3><p>通常将 TCP&#x2F;IP 协议栈分为 4 层（从底层到上层），每层包含不同的协议，共同完成数据的封装、传输和解析：</p>
+<h4 id="1-网络接口层（Network-Interface-Layer）"><a href="#1-网络接口层（Network-Interface-Layer）" class="headerlink" title="1. 网络接口层（Network Interface Layer）"></a>1. 网络接口层（Network Interface Layer）</h4><ul>
+<li><p><strong>作用</strong>：负责将数据通过物理网络（如以太网、Wi-Fi）传输，处理硬件相关的通信细节。</p>
+</li>
+<li><p>核心协议 &#x2F; 技术</p>
+<p>：</p>
+<ul>
+<li>以太网（Ethernet）：定义了局域网内数据传输的帧格式（包含 MAC 地址、校验码等）。</li>
+<li>Wi-Fi（802.11 协议）：无线局域网的通信标准。</li>
+<li>ARP（地址解析协议）：将 IP 地址转换为物理 MAC 地址，用于局域网内设备定位。</li>
+</ul>
+</li>
+<li><p><strong>数据单元</strong>：帧（Frame）</p>
+</li>
+</ul>
+<h4 id="2-网络层（Internet-Layer）"><a href="#2-网络层（Internet-Layer）" class="headerlink" title="2. 网络层（Internet Layer）"></a>2. 网络层（Internet Layer）</h4><ul>
+<li><p><strong>作用</strong>：负责跨网络（如局域网到广域网）的数据路由和转发，确保数据从源设备能找到目标地址。</p>
+</li>
+<li><p>核心协议</p>
+<p>：</p>
+<ul>
+<li>IP（网际协议）：最核心的协议，定义了 IP 地址（如 IPv4、IPv6），负责数据的分组和路由。</li>
+<li>ICMP（互联网控制消息协议）：用于网络诊断（如 <code>ping</code> 命令通过 ICMP 检测主机可达性）。</li>
+<li>IGMP（互联网组管理协议）：用于多播通信（如视频会议）。</li>
+</ul>
+</li>
+<li><p><strong>数据单元</strong>：数据包（Packet）</p>
+</li>
+</ul>
+<h4 id="3-传输层（Transport-Layer）"><a href="#3-传输层（Transport-Layer）" class="headerlink" title="3. 传输层（Transport Layer）"></a>3. 传输层（Transport Layer）</h4><ul>
+<li><p><strong>作用</strong>：提供端到端的可靠数据传输，处理数据的分段、重组、流量控制等。</p>
+</li>
+<li><p>核心协议</p>
+<p>：</p>
+<ul>
+<li>TCP（传输控制协议）：面向连接的可靠协议，通过三次握手建立连接、序列号保证顺序、重传机制处理丢包，适用于对可靠性要求高的场景（如网页、文件传输）。</li>
+<li>UDP（用户数据报协议）：无连接的不可靠协议，不保证数据到达顺序和完整性，但但传输速度快，适用于实时性要求高的场景（如视频通话、游戏）。</li>
+</ul>
+</li>
+<li><p><strong>数据单元</strong>：TCP 称为段（Segment），UDP 称为数据报（Datagram）</p>
+</li>
+</ul>
+<h4 id="4-应用层（Application-Layer）"><a href="#4-应用层（Application-Layer）" class="headerlink" title="4. 应用层（Application Layer）"></a>4. 应用层（Application Layer）</h4><ul>
+<li><p><strong>作用</strong>：直接为用户应用程序提供服务，定义了数据交互的格式和规则。</p>
+</li>
+<li><p>核心协议</p>
+<p>：</p>
+<ul>
+<li>HTTP&#x2F;HTTPS：用于 Web 页面传输（如浏览器访问网站）。</li>
+<li>FTP&#x2F;SFTP：用于文件传输。</li>
+<li>SMTP&#x2F;POP3&#x2F;IMAP：用于邮件发送和接收。</li>
+<li>DNS：用于将域名（如 <code>example.com</code>）解析为 IP 地址。</li>
+<li>SSH&#x2F;Telnet：用于远程登录服务器。</li>
+</ul>
+</li>
+<li><p><strong>数据单元</strong>：数据（Data）</p>
+</li>
+</ul>
+<h3 id="数据传输的封装与解封装过程"><a href="#数据传输的封装与解封装过程" class="headerlink" title="数据传输的封装与解封装过程"></a>数据传输的封装与解封装过程</h3><p>TCP&#x2F;IP 协议栈通过 “封装” 和 “解封装” 实现数据传输，以浏览器访问网站为例：</p>
+<ol>
+<li><strong>封装（发送端）</strong>：<ul>
+<li>应用层：浏览器生成 HTTP 请求数据（如 <code>GET /index.html</code>）。</li>
+<li>传输层：TCP 为数据添加头部（源端口、目标端口、序列号等），形成 TCP 段。</li>
+<li>网络层：IP 为 TCP 段添加头部（源 IP、目标 IP、路由信息等），形成 IP 数据包。</li>
+<li>网络接口层：以太网为 IP 包添加头部（源 MAC、目标 MAC）和尾部（校验码），形成帧，通过物理介质（网线 &#x2F; Wi-Fi）发送。</li>
+</ul>
+</li>
+<li><strong>解封装（接收端）</strong>：<ul>
+<li>网络接口层：接收帧，校验并移除以太网头部，将 IP 数据包交给网络层。</li>
+<li>网络层：解析 IP 头部，确认目标 IP 匹配后，移除 IP 头部，将 TCP 段交给传输层。</li>
+<li>传输层：TCP 验证序列号，重组分段数据，移除 TCP 头部，将 HTTP 数据交给应用层。</li>
+<li>应用层：服务器解析 HTTP 请求，处理后返回响应，重复封装过程回传客户端。</li>
+</ul>
+</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>TCP&#x2F;IP 协议栈是互联网的 “交通规则”，通过分层设计实现了功能解耦：</p>
+<ul>
+<li>底层（网络接口层、网络层）负责 “数据怎么传”（物理传输、路由）；</li>
+<li>上层（传输层、应用层）负责 “传什么数据”（可靠传输、应用交互）。</li>
+</ul>
+<p>这种结构使得不同厂商的设备（如电脑、路由器、服务器）能遵循统一标准通信，是互联网互联互通的基础。</p>
+<p>我们以日常生活中 **“浏览网页（HTTP 请求）”<strong>为例，详细说明 TCP&#x2F;IP 协议栈各层（应用层、传输层、网络层、网络接口层）的协作关系，以及数据在各层之间的</strong>封装、传递、解封装 ** 过程。</p>
+<h3 id="场景：用户在浏览器输入www-example-com并回车，请求加载网页"><a href="#场景：用户在浏览器输入www-example-com并回车，请求加载网页" class="headerlink" title="场景：用户在浏览器输入www.example.com并回车，请求加载网页"></a>场景：用户在浏览器输入<code>www.example.com</code>并回车，请求加载网页</h3><h4 id="步骤-1：应用层（HTTP-协议）生成数据"><a href="#步骤-1：应用层（HTTP-协议）生成数据" class="headerlink" title="步骤 1：应用层（HTTP 协议）生成数据"></a>步骤 1：应用层（HTTP 协议）生成数据</h4><ul>
+<li><p><strong>功能</strong>：应用层负责处理用户的具体需求（这里是 “获取网页内容”），使用 HTTP 协议定义数据格式。</p>
+</li>
+<li><p>过程</p>
+<p>：</p>
+<p>浏览器（应用层程序）生成一个 HTTP 请求报文，内容大致如下：</p>
+<p>plaintext</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /index.html HTTP/1.1  </span><br><span class="line">Host: www.example.com  </span><br><span class="line">User-Agent: Chrome/100.0.0.0  </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>这部分是 “原始数据”，需要交给下层（传输层）处理。</p>
+</li>
+</ul>
+<h4 id="步骤-2：传输层（TCP-协议）封装：添加-“端口信息”"><a href="#步骤-2：传输层（TCP-协议）封装：添加-“端口信息”" class="headerlink" title="步骤 2：传输层（TCP 协议）封装：添加 “端口信息”"></a>步骤 2：传输层（TCP 协议）封装：添加 “端口信息”</h4><ul>
+<li><p><strong>功能</strong>：传输层负责 “端到端” 的可靠传输（TCP 是可靠协议），通过<strong>端口号</strong>区分同一设备上的不同应用（如浏览器用 80&#x2F;443 端口，QQ 用其他端口）。</p>
+</li>
+<li><p>过程</p>
+<p>：</p>
+<p>传输层（TCP）会在 HTTP 数据前添加一个</p>
+<p>TCP 头部</p>
+<p>，包含：</p>
+<ul>
+<li>源端口（浏览器随机分配，如<code>54321</code>）：标记 “哪个应用发送的”；</li>
+<li>目标端口（<code>80</code>，HTTP 默认端口）：标记 “目标服务器的哪个应用接收”；</li>
+<li>序列号、确认号：用于确保数据有序、不丢失（TCP 的 “可靠” 特性）。<br>此时数据单元称为<strong>TCP 段（Segment）</strong>，交给下层（网络层）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="步骤-3：网络层（IP-协议）封装：添加-“IP-地址信息”"><a href="#步骤-3：网络层（IP-协议）封装：添加-“IP-地址信息”" class="headerlink" title="步骤 3：网络层（IP 协议）封装：添加 “IP 地址信息”"></a>步骤 3：网络层（IP 协议）封装：添加 “IP 地址信息”</h4><ul>
+<li><p><strong>功能</strong>：网络层负责 “跨网络路由”，通过<strong>IP 地址</strong>确定数据的传输路径（从用户设备到目标服务器）。</p>
+</li>
+<li><p>过程</p>
+<p>：</p>
+<p>网络层（IP）在 TCP 段前添加</p>
+<p>IP 头部</p>
+<p>，包含：</p>
+<ul>
+<li>源 IP 地址（用户设备的 IP，如<code>192.168.1.100</code>）；</li>
+<li>目标 IP 地址（<code>www.example.com</code>对应的 IP，如<code>93.184.216.34</code>，通过 DNS 解析获得）；</li>
+<li>协议类型（此处为<code>6</code>，表示上层是 TCP）。<br>此时数据单元称为<strong>IP 数据包（Packet）</strong>，交给下层（网络接口层）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="步骤-4：网络接口层（以太网协议）封装：添加-“MAC-地址信息”"><a href="#步骤-4：网络接口层（以太网协议）封装：添加-“MAC-地址信息”" class="headerlink" title="步骤 4：网络接口层（以太网协议）封装：添加 “MAC 地址信息”"></a>步骤 4：网络接口层（以太网协议）封装：添加 “MAC 地址信息”</h4><ul>
+<li><p><strong>功能</strong>：网络接口层负责 “物理介质传输”，通过<strong>MAC 地址</strong>在局域网内识别设备（如路由器、交换机）。</p>
+</li>
+<li><p>过程</p>
+<p>：</p>
+<p>网络接口层（以太网）在 IP 数据包前添加</p>
+<p>以太网头部</p>
+<p>，包含：</p>
+<ul>
+<li>源 MAC 地址（用户设备的网卡 MAC，如<code>00:1A:2B:3C:4D:5E</code>）；</li>
+<li>目标 MAC 地址（局域网内下一跳设备的 MAC，通常是路由器的 MAC，如<code>AA:BB:CC:DD:EE:FF</code>）；</li>
+<li>类型（<code>0x0800</code>，表示上层是 IP 协议）。<br>同时在数据尾部添加<strong>帧校验序列（FCS）</strong>，用于校验数据传输是否出错。<br>此时数据单元称为<strong>以太网帧（Frame）</strong>，通过物理介质（网线 &#x2F; Wi-Fi）发送。</li>
+</ul>
+</li>
+</ul>
+<h4 id="步骤-5：数据在网络中传输（路由转发）"><a href="#步骤-5：数据在网络中传输（路由转发）" class="headerlink" title="步骤 5：数据在网络中传输（路由转发）"></a>步骤 5：数据在网络中传输（路由转发）</h4><ul>
+<li>以太网帧从用户设备发送到路由器，路由器解析以太网头部（验证 MAC 地址是否匹配），然后移除以太网头部，提取 IP 数据包。</li>
+<li>路由器根据 IP 头部的 “目标 IP 地址”（<code>93.184.216.34</code>）查询路由表，确定下一跳设备（可能是其他路由器），重新封装新的以太网帧（目标 MAC 地址改为下一跳设备的 MAC），继续转发。</li>
+<li>经过多跳路由后，数据最终到达<code>www.example.com</code>所在的服务器局域网。</li>
+</ul>
+<h4 id="步骤-6：接收端（服务器）解封装：逐层还原数据"><a href="#步骤-6：接收端（服务器）解封装：逐层还原数据" class="headerlink" title="步骤 6：接收端（服务器）解封装：逐层还原数据"></a>步骤 6：接收端（服务器）解封装：逐层还原数据</h4><p>服务器收到数据后，按 “从下到上” 的顺序解封装：</p>
+<ol>
+<li><strong>网络接口层</strong>：验证 FCS 无误后，移除以太网头部，提取 IP 数据包，交给网络层。</li>
+<li><strong>网络层</strong>：解析 IP 头部，确认目标 IP 是自己，移除 IP 头部，提取 TCP 段，交给传输层。</li>
+<li><strong>传输层</strong>：解析 TCP 头部，通过目标端口（<code>80</code>）确定交给 HTTP 服务，验证序列号确保数据完整，移除 TCP 头部，提取 HTTP 请求数据，交给应用层。</li>
+<li><strong>应用层</strong>：HTTP 服务处理请求，生成响应数据（网页内容），然后按上述步骤反向封装，发送回用户设备。</li>
+</ol>
+<h3 id="总结：各层关系的核心体现"><a href="#总结：各层关系的核心体现" class="headerlink" title="总结：各层关系的核心体现"></a>总结：各层关系的核心体现</h3><ul>
+<li><strong>依赖关系</strong>：应用层（HTTP）依赖传输层（TCP）的端口标识，传输层依赖网络层（IP）的地址路由，网络层依赖网络接口层（以太网）的物理传输。</li>
+<li><strong>封装 &#x2F; 解封装</strong>：发送端每层添加头部（封装），接收端每层移除头部（解封装），数据像 “剥洋葱” 一样逐层还原。</li>
+<li><strong>独立性</strong>：如果用户切换网络（如从有线换 Wi-Fi），只需网络接口层调整 MAC 地址和传输介质，上层（IP&#x2F;TCP&#x2F;HTTP）无需任何修改，体现了分层设计的灵活性。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>misc</category>
+      </categories>
+      <tags>
+        <tag>misc</tag>
+      </tags>
+  </entry>
 </search>
