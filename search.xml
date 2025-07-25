@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>第一篇博客</title>
-    <url>/2025/07/05/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>听说hexo很好玩</p>
-]]></content>
-      <categories>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>程序怎么运行起来的</title>
     <url>/2025/07/17/%E7%A8%8B%E5%BA%8F%E6%80%8E%E4%B9%88%E8%BF%90%E8%A1%8C%E8%B5%B7%E6%9D%A5%E7%9A%84/</url>
     <content><![CDATA[<h2 id="四大金刚"><a href="#四大金刚" class="headerlink" title="四大金刚"></a>四大金刚</h2><p>一个二进制文件运行起来需要四个核心部件： 可执行文件，操作系统（os），内存（ram），处理器（cpu）协同操作。</p>
@@ -71,6 +59,18 @@
 ]]></content>
       <tags>
         <tag>CSAPP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>第一篇博客</title>
+    <url>/2025/07/05/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>听说hexo很好玩</p>
+]]></content>
+      <categories>
+        <category>hexo</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
       </tags>
   </entry>
 </search>
