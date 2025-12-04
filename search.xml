@@ -81,7 +81,7 @@
         <category>CTF</category>
       </categories>
       <tags>
-        <tag>Pwn</tag>
+        <tag>pwn</tag>
       </tags>
   </entry>
   <entry>
@@ -394,7 +394,7 @@
 <p>参考：<a href="https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem('bin%20sh'))/index.html">https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem(&#39;bin%20sh&#39;))/index.html</a></p>
 ]]></content>
       <categories>
-        <category>ctf</category>
+        <category>CTF</category>
       </categories>
       <tags>
         <tag>pwn</tag>
@@ -442,7 +442,7 @@
 <h2 id="更换动态链接库"><a href="#更换动态链接库" class="headerlink" title="更换动态链接库"></a>更换动态链接库</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201153641147.png" alt="image-20251201153641147"></p>
 ]]></content>
       <categories>
-        <category>ctf</category>
+        <category>CTF</category>
       </categories>
       <tags>
         <tag>pwn</tag>
@@ -525,7 +525,7 @@
 
 ]]></content>
       <categories>
-        <category>ctf</category>
+        <category>CTF</category>
       </categories>
       <tags>
         <tag>pwn</tag>
@@ -592,7 +592,7 @@
 <p><code>unsortedbin</code>分配完后 会从top chunk中分割。</p>
 ]]></content>
       <categories>
-        <category>ctf</category>
+        <category>CTF</category>
       </categories>
       <tags>
         <tag>pwn</tag>
