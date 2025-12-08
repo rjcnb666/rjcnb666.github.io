@@ -219,6 +219,137 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/09/%E5%B8%82%E8%B5%9Bmisc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tou.jpg">
+      <meta itemprop="name" content="JC">
+      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mvegetable'blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/12/09/%E5%B8%82%E8%B5%9Bmisc/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-12-09 01:47:16 / 修改时间：01:49:12" itemprop="dateCreated datePublished" datetime="2025-12-09T01:47:16+08:00">2025-12-09</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>423</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>title: MISCTF<br>date: 2025-12-9 1:39:32<br>tags: MISC<br>categories: CTF</p>
+<h1 id="MISCTF"><a href="#MISCTF" class="headerlink" title="MISCTF"></a>MISCTF</h1><h2 id="RAR"><a href="#RAR" class="headerlink" title="RAR"></a>RAR</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207233225824.png" alt="image-20251207233225824"></p>
+<p>7A改为74</p>
+<p>导出新压缩包</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207233532258.png" alt="image-20251207233532258"></p>
+<p>丢到随波逐流里 看到是gif</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207235606080.png" alt="image-20251207235606080"></p>
+<p>gif动态分解帧</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207235942314.png" alt="image-20251207235942314"></p>
+<p>用stegsolve把两个导出</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209013958715.png" alt="image-20251209013958715"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208002334613.png" alt="image-20251208002334613"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208002344858.png" alt="image-20251208002344858"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208002425714.png" alt="image-20251208002425714"></p>
+<p>拼接起来可以获得flag.</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209013918810.png" alt="image-20251209013918810"></p>
+<h2 id="数据包⾥有神马"><a href="#数据包⾥有神马" class="headerlink" title="数据包⾥有神马"></a>数据包⾥有神马</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208005729366.png" alt="image-20251208005729366"></p>
+<p>发现fenxi.php</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208005918462.png" alt="image-20251208005918462"></p>
+<p>追踪流发现jpeg文件</p>
+<p>转化为图片</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208010409696.png" alt="image-20251208010409696"></p>
+<h2 id="环环相扣"><a href="#环环相扣" class="headerlink" title="环环相扣"></a>环环相扣</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208011041963.png" alt="image-20251208011041963"></p>
+<p>导出表情包</p>
+<p><img src="https://img2020.cnblogs.com/blog/1049983/202108/1049983-20210806171815828-373165372.jpg" alt="img"></p>
+<p>这里没有扫出东西来</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208013132048.png" alt="image-20251208013132048"></p>
+<p>但是这个ctf可能是密码。</p>
+<p>加密668b13e0b0fc0944daf4c223b9831e49。</p>
+<p>然后一个一个binwalk</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208013743833.png" alt="image-20251208013743833"></p>
+<p>可以看到这里有一个ZIP文件</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208014444233.png" alt="image-20251208014444233"></p>
+<p>解码</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208014607551.png" alt="image-20251208014607551"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/seclover.php%253ffile=70bf85eda6b86ee92a5f437f7d83b7e5(1).jpg" alt="seclover.php%3ffile&#x3D;70bf85eda6b86ee92a5f437f7d83b7e5(1)"></p>
+<p>推测和这个图有关系 因为这个是内裤。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208014925325.png" alt="image-20251208014925325"></p>
+<p>得到一个压缩包</p>
+<p>尝试刚刚的密码</p>
+<p><img src="D:\市赛\image-20251208015021085.png" alt="image-20251208015021085"></p>
+<p>成功打开。</p>
+<p>解码获取flag。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209014601606.png" alt="image-20251209014601606"></p>
+<h2 id="一枝独秀"><a href="#一枝独秀" class="headerlink" title="一枝独秀"></a>一枝独秀</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208022142763.png" alt="image-20251208022142763"></p>
+<p>丢到随波逐流里</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208022825156.png" alt="image-20251208022825156"></p>
+<p>可以看到需要密码</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208024208111.png" alt="image-20251208024208111"></p>
+<p>暴力破解得到密码。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208024325200.png" alt="image-20251208024325200"></p>
+<p>解出来一堆照片。</p>
+<p>按大小排序发现这个（81）和其他的不一样。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208025340599.png" alt="image-20251208025340599"></p>
+<p>密码尝试flowers</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208030136945.png" alt="image-20251208030136945"></p>
+<p>提取出来的文件放到随波逐流可以看出来是zip。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208030340645.png" alt="image-20251208030340645"></p>
+<p>解压得到一个.txt</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208030423857.png" alt="image-20251208030423857"></p>
+<p>丢到随波逐流里</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208031201273.png" alt="image-20251208031201273"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208031252209.png" alt="image-20251208031252209"></p>
+<p>这里看到HINT</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208031118745.png" alt="image-20251208031118745"></p>
+<p>得到flag.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/03/editable_note/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1415,7 +1546,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
