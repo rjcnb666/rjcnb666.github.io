@@ -599,10 +599,9 @@
       </tags>
   </entry>
   <entry>
-    <title></title>
+    <title>MISCTF</title>
     <url>/2025/12/09/%E5%B8%82%E8%B5%9Bmisc/</url>
-    <content><![CDATA[<p>title: MISCTF<br>date: 2025-12-9 1:39:32<br>tags: MISC<br>categories: CTF</p>
-<h1 id="MISCTF"><a href="#MISCTF" class="headerlink" title="MISCTF"></a>MISCTF</h1><h2 id="RAR"><a href="#RAR" class="headerlink" title="RAR"></a>RAR</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207233225824.png" alt="image-20251207233225824"></p>
+    <content><![CDATA[<h1 id="MISCTF"><a href="#MISCTF" class="headerlink" title="MISCTF"></a>MISCTF</h1><h2 id="RAR"><a href="#RAR" class="headerlink" title="RAR"></a>RAR</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207233225824.png" alt="image-20251207233225824"></p>
 <p>7A改为74</p>
 <p>导出新压缩包</p>
 <p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207233532258.png" alt="image-20251207233532258"></p>
@@ -668,5 +667,11 @@
 <p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208031118745.png" alt="image-20251208031118745"></p>
 <p>得到flag.</p>
 ]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>MISC</tag>
+      </tags>
   </entry>
 </search>
