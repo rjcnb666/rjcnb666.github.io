@@ -219,6 +219,199 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/10/pwn%E7%8E%AF%E5%A2%83%EF%BC%88%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tou.jpg">
+      <meta itemprop="name" content="JC">
+      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mvegetable'blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/12/10/pwn%E7%8E%AF%E5%A2%83%EF%BC%88%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%89/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-12-10 03:12:13 / 修改时间：12:09:09" itemprop="dateCreated datePublished" datetime="2025-12-10T03:12:13+08:00">2025-12-10</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.1k</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="pwn-环境"><a href="#pwn-环境" class="headerlink" title="pwn 环境"></a>pwn 环境</h1><h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>为了帮助大家更快的了解入门pwn，我在这里教大家搭建一下Pwn环境。认真看下去，不要嫌麻烦，跟着一步一步地走一定搭成功的。学长重新搭了一遍，应该没什么问题。期待在后面与大家相遇。</p>
+<h2 id="ubuntu-24-04"><a href="#ubuntu-24-04" class="headerlink" title="ubuntu 24.04:"></a>ubuntu 24.04:</h2><p>这里搭建的是ubuntu 24.04版本，大家也可以尝试其他版本。</p>
+<p><a target="_blank" rel="noopener" href="https://ubuntu.com/download/desktop">Download Ubuntu Desktop | Ubuntu</a></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208175549175.png" alt="image-20251208175549175"></p>
+<p>从官网获取镜像</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180007680.png" alt="image-20251208180007680"></p>
+<p>如果没有vmvare的话可以从这里下载</p>
+<p>通过网盘分享的文件：VMware-workstation-full-17.6.1-24319023.exe<br>链接: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1t65qAD2Fkt4Qm-krvvgoDQ?pwd=akeq">https://pan.baidu.com/s/1t65qAD2Fkt4Qm-krvvgoDQ?pwd=akeq</a> 提取码: akeq </p>
+<p>打开你的<code>vmware</code></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180050753.png" alt="image-20251208180050753"></p>
+<p>新建虚拟机</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180815158.png" alt="image-20251208180815158"></p>
+<p>选择自定义 下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180840922.png" alt="image-20251208180840922"></p>
+<p>下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180939845.png" alt="image-20251208180939845"></p>
+<p>选择刚刚下载好的.iso镜像文件 下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208181225726.png" alt="image-20251208181225726"></p>
+<p>选一个你喜欢的名字 下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208181433019.png" alt="image-20251208181433019"></p>
+<p>起个名 然后位置放在文件夹下 下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208233922173.png" alt="image-20251208233922137"></p>
+<p>这里由于24.04版本对资源要求较高，内存最好是&gt;&#x3D;4G</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208234747305.png" alt="image-20251208234747305"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235025624.png" alt="image-20251208235025624"></p>
+<p>下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235102627.png" alt="image-20251208235102627"></p>
+<p>下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235441279.png" alt="image-20251208235441279"></p>
+<p>下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235459502.png" alt="image-20251208235459502"></p>
+<p>下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235611212.png" alt="image-20251208235611212"></p>
+<p>这里为虚拟磁盘预留足够的空间。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235648477.png" alt="image-20251208235648477"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235658754.png" alt="image-20251208235658754"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000229051.png" alt="image-20251209000229051"></p>
+<p>编辑虚拟机</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000209578.png" alt="image-20251209000209578"></p>
+<p>进行如上配置</p>
+<p>打开虚拟机</p>
+<p>按enter</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000749346.png" alt="image-20251209000749346"></p>
+<p>一路下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000837079.png" alt="image-20251209000837079"></p>
+<p>到这个页面的时候改成extended selection</p>
+<p>下一步</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209001113643.png" alt="image-20251209001113643"></p>
+<p>这里随便取个名字 下一步</p>
+<p>然后下一步按install</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209001205487.png" alt="image-20251209001205487"></p>
+<p>开始安装</p>
+<p>需要等待一会</p>
+<p>如果出现卡死的情况可以尝试关闭虚拟机 然后打开虚拟机设置，显示，取消加速3D图像</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209231925515.png" alt="image-20251209231925515"></p>
+<p>不要着急 学长用初中的老电脑重新搭了一遍 也是会出现一些状况 慢慢来就好。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209231739398.png" alt="image-20251209231739398"></p>
+<p>这里重启一下就安装成功了</p>
+<h3 id="工具："><a href="#工具：" class="headerlink" title="工具："></a>工具：</h3><p>右键open the ternal</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209232216675.png" alt="image-20251209232216675"></p>
+<p>后面无脑复制就好</p>
+<p>虚拟机里的复制粘贴是ctrl +shift +c &#x2F;v</p>
+<h4 id="vim"><a href="#vim" class="headerlink" title="vim:"></a>vim:</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install vim -y</span><br></pre></td></tr></table></figure>
+
+<p>密码是你刚刚设置过的</p>
+<h4 id="gcc"><a href="#gcc" class="headerlink" title="gcc"></a>gcc</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gcc -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="git"><a href="#git" class="headerlink" title="git"></a>git</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git -y</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="python3-pip"><a href="#python3-pip" class="headerlink" title="python3-pip"></a>python3-pip</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install python3-pip -y</span><br><span class="line">sudo mv /usr/lib/python3.12/EXTERNALLY-MANAGED /usr/lib/python3.12/EXTERNALLY-MANAGED.bk</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="pwngdb-pwndbg-敲黑板-调试利器"><a href="#pwngdb-pwndbg-敲黑板-调试利器" class="headerlink" title="pwngdb+pwndbg(敲黑板 调试利器)"></a>pwngdb+pwndbg(敲黑板 调试利器)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd ~/</span><br><span class="line">git clone https://github.com/pwndbg/pwndbg</span><br><span class="line">cd ~/pwndbg</span><br><span class="line">./setup.sh</span><br><span class="line">cd ..</span><br><span class="line">git clone https://github.com/scwuaptx/Pwngdb</span><br><span class="line">cp ~/Pwngdb/.gdbinit ~/</span><br><span class="line">vim ~/.gdbinit</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209233311428.png" alt="image-20251209233311428">;</p>
+<p>如上这里可能出现<code>unable to access</code>的情况</p>
+<p>git服务器在国外，所以有时候git clone指令会出现这种情况</p>
+<p>一种解决方法是用<code>gitclone.com</code>加速 ，</p>
+<p>git clone <a target="_blank" rel="noopener" href="https://gitclone.com/github.com/pwndbg/pwndbg">https://gitclone.com/github.com/pwndbg/pwndbg</a></p>
+<p>也可以科学上网 </p>
+<p>​	</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210025700005.png" alt="image-20251210025700005"></p>
+<p>点击i 进入编辑模式</p>
+<p>把第一行改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">source ~/pwndbg/gdbinit.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>按esc    : wq 保存并退出。</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210031110253.png" alt="image-20251210031110253"></p>
+<p>可以看到我们的pwngdb和pwndbg已经安好了</p>
+<p>后面已经无脑粘贴</p>
+<h4 id="pwntool（脚本利器）"><a href="#pwntool（脚本利器）" class="headerlink" title="pwntool（脚本利器）"></a>pwntool（脚本利器）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 确保你有 pip</span><br><span class="line">sudo apt install python3-pip python3-dev libssl-dev libffi-dev build-essential</span><br><span class="line"># 安装 pwntools</span><br><span class="line">pip install pwntools --break-system-packages</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="LibcSearcher"><a href="#LibcSearcher" class="headerlink" title="LibcSearcher"></a>LibcSearcher</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd ~/</span><br><span class="line">git clone https://github.com/lieanu/LibcSearcher</span><br><span class="line">cd LibcSearcher</span><br><span class="line">sudo python3 setup.py develop</span><br><span class="line">cd ..</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="one-gadget，seccomp-tools"><a href="#one-gadget，seccomp-tools" class="headerlink" title="one_gadget，seccomp-tools"></a>one_gadget，seccomp-tools</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo gem sources --remove https://rubygems.org/  </span><br><span class="line">sudo gem sources --add https://gems.ruby-china.com/</span><br><span class="line">sudo -E gem install seccomp-tools one_gadget</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="patchelf"><a href="#patchelf" class="headerlink" title="patchelf"></a>patchelf</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install patchelf</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="ropgadget"><a href="#ropgadget" class="headerlink" title="ropgadget"></a>ropgadget</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install ROPgadget --break-system-packages</span><br></pre></td></tr></table></figure>
+
+<h3 id="展示："><a href="#展示：" class="headerlink" title="展示："></a>展示：</h3><p>这里可以随便找一个pwn附件试一下</p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210111348903.png" alt="image-20251210111348903"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210111430170.png" alt="image-20251210111430170"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210120524251.png" alt="image-20251210120524251"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210120651912.png" alt="image-20251210120651912"></p>
+<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210120730435.png" alt="image-20251210120730435"></p>
+<h3 id="食用"><a href="#食用" class="headerlink" title="食用:"></a>食用:</h3><p>常用的工具大概就是这些.记得还要下idapro</p>
+<p>如果你还想美化你的页面的话可以继续搭下去（这是我参考的博客）：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/j284886202/article/details/139352067">★pwn 24.04环境搭建保姆级教程★_ubuntu24 pwn-CSDN博客</a></p>
+<p>pwn最重要的也是最有魅力的地方大概就是动态和静态调试了 入门的时候可以多调调程序分析分析静态代码。</p>
+<p>pwndbg的基本使用:</p>
+<p><a target="_blank" rel="noopener" href="https://xidp0.github.io/2024/06/13/Pwndbg%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">Pwndbg基础使用 | XiDP</a></p>
+<p>也可以看看这个up 大体了解一下Pwn题的解题流程</p>
+<p><a target="_blank" rel="noopener" href="https://space.bilibili.com/500741588?spm_id_from=333.1387.follow.user_card.click">小猿的日常生活的个人空间-小猿的日常生活个人主页-哔哩哔哩视频</a></p>
+<p>虚拟机的搭建到这里就结束了，有问题可以先尝试自行解决，问ai老师或者查询相关博客。当然也联系学长噢。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/09/%E5%B8%82%E8%B5%9Bmisc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1554,7 +1747,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1618,7 +1811,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2025</span>
+  <span itemprop="copyrightYear">2026</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
