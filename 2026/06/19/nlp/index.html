@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto Sans Simplified Chinese:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rjcnb666.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false,"announcement":{"enable":true}},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":"enable","trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+
+  <meta name="description" content="第一章 NLP NLP 是什么 自然语言处理（NLP）：让计算机理解、解释和生成人类语言的技术 融合了计算机科学、人工智能、语言学等多学科 核心目标：打破人类语言和计算机语言之间的障碍   NLP 核心任务   任务 说明 示例    中文分词 把连续中文切成词序列 “今天天气真好” → [“今天”,”天气”,”真”,”好”]   子词切分 把词进一步拆成更小的子词 “unhappiness” →">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LLVM-NLP">
+<meta property="og:url" content="https://rjcnb666.github.io/2026/06/19/nlp/index.html">
+<meta property="og:site_name" content="mvegetable&#39;blog">
+<meta property="og:description" content="第一章 NLP NLP 是什么 自然语言处理（NLP）：让计算机理解、解释和生成人类语言的技术 融合了计算机科学、人工智能、语言学等多学科 核心目标：打破人类语言和计算机语言之间的障碍   NLP 核心任务   任务 说明 示例    中文分词 把连续中文切成词序列 “今天天气真好” → [“今天”,”天气”,”真”,”好”]   子词切分 把词进一步拆成更小的子词 “unhappiness” →">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-18T17:39:32.000Z">
+<meta property="article:modified_time" content="2026-06-20T06:20:07.244Z">
+<meta property="article:author" content="JC">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rjcnb666.github.io/2026/06/19/nlp/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>LLVM-NLP | mvegetable'blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">mvegetable'blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">K-ON  ʕ·ᴥ·ʔฅ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-ret2me">
+
+    <a href="/RET2ME/" rel="section"><i class="fa fa-book fa-fw"></i>RET2ME</a>
+
+  </li>
+        <li class="menu-item menu-item-null">
+
+    <a href="/NULL/" rel="section"><i class="fa fa-skull fa-fw"></i>null</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rjcnb666.github.io/2026/06/19/nlp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/tou.jpg">
+      <meta itemprop="name" content="JC">
+      <meta itemprop="description" content="ʕ´•ᴥ• ʔ">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mvegetable'blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LLVM-NLP
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-06-19 01:39:32" itemprop="dateCreated datePublished" datetime="2026-06-19T01:39:32+08:00">2026-06-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-06-20 14:20:07" itemprop="dateModified" datetime="2026-06-20T14:20:07+08:00">2026-06-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/VVLM/" itemprop="url" rel="index"><span itemprop="name">VVLM</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="far fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第一章-NLP"><a href="#第一章-NLP" class="headerlink" title="第一章 NLP"></a>第一章 NLP</h1><hr>
+<h2 id="NLP-是什么"><a href="#NLP-是什么" class="headerlink" title="NLP 是什么"></a>NLP 是什么</h2><ul>
+<li><strong>自然语言处理（NLP）</strong>：让计算机理解、解释和生成人类语言的技术</li>
+<li>融合了计算机科学、人工智能、语言学等多学科</li>
+<li>核心目标：打破人类语言和计算机语言之间的障碍</li>
+</ul>
+<hr>
+<h2 id="NLP-核心任务"><a href="#NLP-核心任务" class="headerlink" title="NLP 核心任务"></a>NLP 核心任务</h2><table>
+<thead>
+<tr>
+<th align="left">任务</th>
+<th align="left">说明</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>中文分词</strong></td>
+<td align="left">把连续中文切成词序列</td>
+<td align="left">“今天天气真好” → [“今天”,”天气”,”真”,”好”]</td>
+</tr>
+<tr>
+<td align="left"><strong>子词切分</strong></td>
+<td align="left">把词进一步拆成更小的子词</td>
+<td align="left">“unhappiness” → [“un”,”happi”,”ness”]</td>
+</tr>
+<tr>
+<td align="left"><strong>词性标注</strong></td>
+<td align="left">给每个词标注词性</td>
+<td align="left">“She&#x2F;代词 is&#x2F;动词 playing&#x2F;动词…”</td>
+</tr>
+<tr>
+<td align="left"><strong>文本分类</strong></td>
+<td align="left">把文本归入预定义类别</td>
+<td align="left">NBA新闻 → “体育”</td>
+</tr>
+<tr>
+<td align="left"><strong>实体识别</strong></td>
+<td align="left">识别文本中的人名、地名等</td>
+<td align="left">“李雷” → 人名，”上海” → 地名</td>
+</tr>
+<tr>
+<td align="left"><strong>关系抽取</strong></td>
+<td align="left">识别实体之间的语义关系</td>
+<td align="left">“比尔·盖茨”—创始人—“微软”</td>
+</tr>
+<tr>
+<td align="left"><strong>文本摘要</strong></td>
+<td align="left">生成简洁摘要（抽取式&#x2F;生成式）</td>
+<td align="left">长新闻 → 一句话概括</td>
+</tr>
+<tr>
+<td align="left"><strong>机器翻译</strong></td>
+<td align="left">源语言 → 目标语言</td>
+<td align="left">“今天天气很好” → “The weather is nice today”</td>
+</tr>
+<tr>
+<td align="left"><strong>自动问答</strong></td>
+<td align="left">理解问题并自动给出答案</td>
+<td align="left">检索式 &#x2F; 知识库 &#x2F; 社区问答</td>
+</tr>
+</tbody></table>
+<h2 id="词向量"><a href="#词向量" class="headerlink" title="词向量"></a>词向量</h2><blockquote>
+<p>计算机只认数字，不认文字,所以第一步是：<strong>把文字变成数字</strong>。</p>
+</blockquote>
+<p>在完成分词等工作后,就需要找到这些词汇对应的词向量,以进行下一步操作</p>
+<p>假设我们用 4 维向量表示:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">       [动物性, 大小, 可爱度, 能飞]        <span class="comment">///计算机内部不会是这些人类能读懂的语言</span></span><br><span class="line">猫    → [ <span class="number">0.9</span>,  <span class="number">0.3</span>,  <span class="number">0.8</span>,  <span class="number">0.0</span>]</span><br><span class="line">狗    → [ <span class="number">0.9</span>,  <span class="number">0.5</span>,  <span class="number">0.7</span>,  <span class="number">0.0</span>]</span><br><span class="line">鱼    → [ <span class="number">0.8</span>,  <span class="number">0.2</span>,  <span class="number">0.3</span>,  <span class="number">0.0</span>]</span><br><span class="line">汽车  → [ <span class="number">0.0</span>,  <span class="number">0.7</span>,  <span class="number">0.1</span>,  <span class="number">0.0</span>]</span><br><span class="line">飞机  → [ <span class="number">0.0</span>,  <span class="number">0.9</span>,  <span class="number">0.0</span>,  <span class="number">0.9</span>]</span><br></pre></td></tr></table></figure>
+
+<p>这就是词向量的核心价值：<strong>语义相近的词，向量在空间中距离就近</strong>。</p>
+<p>这个存储词向量的表就是嵌入矩阵.</p>
+<p>那这个嵌入矩阵是怎么产生的呢?</p>
+<p>Word2Vec 和 ELMo 都是词向量（word embedding）方法:</p>
+<h3 id="Word2Vec-静态"><a href="#Word2Vec-静态" class="headerlink" title="Word2Vec(静态)"></a>Word2Vec(静态)</h3><ul>
+<li><strong>静态词向量</strong>：为每个词学习一个固定的向量表示</li>
+<li><strong>预训练方式</strong>：通过 CBOW 或 Skip-gram 在大规模语料上训练</li>
+<li><strong>特点</strong>：同一个词无论出现在什么上下文中，向量都是一样的</li>
+<li>可以看作是对”嵌入词表”的预处理训练，训练完成后得到一张固定的词-向量查找表</li>
+</ul>
+<p><strong>总结:word2vec最终的产物就是这样一个嵌入词表,他是静态的,只能从表中取词向量,无法处理一词多义问题.</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">比如针对苹果这个词:</span><br><span class="line"></span><br><span class="line">句子 A：「我今天吃了一个苹果」</span><br><span class="line"></span><br><span class="line">句子 B：「苹果发布了新款iPhone」</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>Word2Vec 的处理方式:</strong></p>
+<p>训练完成后，产出的嵌入词表长这样（简化为3维）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line"></span><br><span class="line">嵌入词表（固定的查找字典）</span><br><span class="line"></span><br><span class="line">────────────────────────</span><br><span class="line"></span><br><span class="line">&quot;苹果&quot;  → [0.3, 0.7, 0.2]</span><br><span class="line"></span><br><span class="line">&quot;手机&quot;  → [0.8, 0.1, 0.5]</span><br><span class="line"></span><br><span class="line">&quot;香蕉&quot;  → [0.4, 0.6, 0.3]</span><br><span class="line"></span><br><span class="line">&quot;今天&quot;  → [0.1, 0.9, 0.4]</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>处理句子 A「我今天吃了一个<strong>苹果</strong>」：</p>
+<ul>
+<li>查表 → <code>[0.3, 0.7, 0.2]</code></li>
+</ul>
+<p>处理句子 B「<strong>苹果</strong>发布了新款iPhone」：</p>
+<ul>
+<li>查表 → <code>[0.3, 0.7, 0.2]</code></li>
+</ul>
+<p><strong>结果完全一样。</strong> 它不管上下文是水果还是公司，”苹果”永远是同一个向量。这个向量大概是两种含义的某种混合平均，两边都沾点，两边都不精确。</p>
+<h3 id="ELMo-动态"><a href="#ELMo-动态" class="headerlink" title="ELMo (动态)"></a>ELMo (动态)</h3><ul>
+<li><strong>动态&#x2F;上下文相关词向量</strong>：同一个词在不同上下文中会有不同的向量</li>
+<li><strong>预训练方式</strong>：通过双向 LSTM 语言模型在大规模语料上训练</li>
+<li><strong>特点</strong>：不是简单的查找表，而是需要把整个句子输入模型后才能得到每个词的表示</li>
+<li>严格来说<strong>不是</strong>对嵌入词表的预处理，而是一个预训练的特征提取器</li>
+</ul>
+<p><strong>总结:相比于word2vec的静态处理方式,elmo的产出物是一个模型,他会有像word2vec中的静态嵌入矩阵,但是他的模型能力会根据矩阵以及上下文生成一个动态的词向量,成功解决了一词多义问题.</strong></p>
+<p>还是刚刚的那个例子:</p>
+<p><strong>ELMo 的处理方式</strong></p>
+<p>ELMo 有两部分：</p>
+<p><strong>第一部分：底层词表（类似 Word2Vec）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line"></span><br><span class="line">底层词表</span><br><span class="line"></span><br><span class="line">────────────────────────</span><br><span class="line"></span><br><span class="line">&quot;苹果&quot;  → [0.3, 0.7, 0.2]   ← 初始向量，也是静态的</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二部分：双向 LSTM 模型（关键区别在这里）</strong></p>
+<p>处理句子 A「我今天吃了一个苹果」：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line"></span><br><span class="line">输入层:   我 → 今天 → 吃 → 了 → 一个 → 苹果</span><br><span class="line"></span><br><span class="line">前向LSTM: → → → → → → 读到&quot;吃&quot;&quot;一个&quot;这些上下文</span><br><span class="line"></span><br><span class="line">后向LSTM: ← ← ← ← ← ← 读到整句语境</span><br><span class="line"></span><br><span class="line">输出: &quot;苹果&quot; → [0.1, 0.9, 0.1]  ← 偏向水果含义</span><br></pre></td></tr></table></figure>
+
+<p>处理句子 B「苹果发布了新款iPhone」：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">输入层:   苹果 → 发布 → 了 → 新款 → iPhone↓</span><br><span class="line"></span><br><span class="line">前向LSTM: → → → → → 读到&quot;发布&quot;&quot;iPhone&quot;这些上下文</span><br><span class="line"></span><br><span class="line">后向LSTM: ← ← ← ← ← 读到整句语境</span><br><span class="line">           </span><br><span class="line">输出: &quot;苹果&quot; → [0.8, 0.2, 0.7]  ← 偏向公司含义</span><br></pre></td></tr></table></figure>
+
+<p><strong>同一个词，不同上下文，产出不同向量。</strong></p>
+<h3 id="两种方式对比"><a href="#两种方式对比" class="headerlink" title="两种方式对比:"></a>两种方式对比:</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>Word2Vec</th>
+<th>ELMo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>产出物</td>
+<td>一张词表</td>
+<td>词表 + LSTM模型</td>
+</tr>
+<tr>
+<td>使用时</td>
+<td>查表，O(1)</td>
+<td>查表 + 模型前向推理</td>
+</tr>
+<tr>
+<td>同一个词不同句子</td>
+<td>向量相同</td>
+<td>向量不同</td>
+</tr>
+<tr>
+<td>类比</td>
+<td>字典：查”苹果”永远是同一个解释</td>
+<td>人：看到上下文后判断”苹果”在这里是什么意思</td>
+</tr>
+</tbody></table>
+<p><strong>Word2Vec 是字典，ELMo 是一个会阅读理解的模型。</strong></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h2><p>输入一句话：”我喜欢cat”<br><strong>第一步：分词（Tokenization）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">原文：&quot;我喜欢cat&quot;</span><br><span class="line">分词器不是按&quot;词&quot;切的，是按训练好的词表规则切的（BPE算法）</span><br><span class="line">切出来的 token：</span><br><span class="line">  &quot;我&quot; | &quot;喜欢&quot; | &quot;cat&quot;</span><br><span class="line">每个 token 在词表里有个编号（ID）：</span><br><span class="line">  &quot;我&quot;   → ID: 9356</span><br><span class="line">  &quot;喜欢&quot; → ID: 42871</span><br><span class="line">  &quot;cat&quot;  → ID: 2189</span><br><span class="line">所以这句话变成了：[9356, 42871, 2189]</span><br></pre></td></tr></table></figure>
+
+<p>注意：token 不一定是一个完整的词</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">比如输入 &quot;unbelievable&quot;</span><br><span class="line">可能被切成：</span><br><span class="line">  &quot;un&quot; | &quot;believ&quot; | &quot;able&quot;</span><br><span class="line">  → [556, 31420, 481]</span><br><span class="line">再比如输入 &quot;今天天气不错&quot;</span><br><span class="line">可能被切成：</span><br><span class="line">  &quot;今天&quot; | &quot;天气&quot; | &quot;不&quot; | &quot;错&quot;</span><br><span class="line">  → [8837, 10294, 223, 9754]</span><br><span class="line">怎么切取决于词表，常见的词整个保留，罕见的词拆成片段</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二步：查嵌入矩阵</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">嵌入矩阵（整个模型共用这一个）：</span><br><span class="line">假设词表大小 = 100000，嵌入维度 = 6（实际是4096，这里简化）</span><br><span class="line">              维度1  维度2  维度3  维度4  维度5  维度6</span><br><span class="line">ID 0 &quot;the&quot;  [ 0.21, 0.53, 0.11, 0.82, 0.34, 0.67]</span><br><span class="line">ID 1 &quot;a&quot;    [ 0.15, 0.49, 0.08, 0.77, 0.29, 0.61]</span><br><span class="line">...</span><br><span class="line">ID 2189 &quot;cat&quot;  [ 0.91, 0.12, 0.33, 0.05, 0.78, 0.44]  ← 查到</span><br><span class="line">...</span><br><span class="line">ID 9356 &quot;我&quot;   [ 0.43, 0.87, 0.22, 0.65, 0.11, 0.55]  ← 查到</span><br><span class="line">...</span><br><span class="line">ID 42871 &quot;喜欢&quot; [ 0.55, 0.33, 0.71, 0.88, 0.46, 0.19]  ← 查到</span><br><span class="line">...</span><br><span class="line">ID 99999 &quot;...&quot;  [ 0.02, 0.99, 0.50, 0.31, 0.14, 0.73]</span><br><span class="line">10万行，每行一个 token，中英日韩全部混在一起</span><br></pre></td></tr></table></figure>
+
+<p>查完之后</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">&quot;我喜欢cat&quot; → [9356, 42871, 2189]</span><br><span class="line">查表得到 3 个向量：</span><br><span class="line">&quot;我&quot;   → [0.43, 0.87, 0.22, 0.65, 0.11, 0.55]</span><br><span class="line">&quot;喜欢&quot; → [0.55, 0.33, 0.71, 0.88, 0.46, 0.19]</span><br><span class="line">&quot;cat&quot;  → [0.91, 0.12, 0.33, 0.05, 0.78, 0.44]</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步：送进 Transformer 层</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">这 3 个向量排成矩阵：</span><br><span class="line">     [0.43, 0.87, 0.22, 0.65, 0.11, 0.55]   ← &quot;我&quot;</span><br><span class="line">     [0.55, 0.33, 0.71, 0.88, 0.46, 0.19]   ← &quot;喜欢&quot;</span><br><span class="line">     [0.91, 0.12, 0.33, 0.05, 0.78, 0.44]   ← &quot;cat&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后经过：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  第1层 Transformer：矩阵乘法 → 注意力 → 矩阵乘法 → 输出新的3个向量</span><br><span class="line">  第2层 Transformer：再来一遍</span><br><span class="line">  第3层 ...</span><br><span class="line">  ...</span><br><span class="line">  第96层：最终输出 3 个向量</span><br><span class="line">每过一层，向量的数值都在变化</span><br><span class="line">&quot;我&quot; 的向量会融入 &quot;喜欢&quot; 和 &quot;cat&quot; 的信息</span><br></pre></td></tr></table></figure>
+
+<p>这就是注意力机制在做的事<br><strong>第四步：预测下一个词</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">取最后一个 token &quot;cat&quot; 的最终向量：</span><br><span class="line">[0.12, 0.94, 0.56, 0.03, 0.81, 0.37]   ← 经过96层之后的值</span><br><span class="line">用它和输出矩阵相乘，得到10万个概率：</span><br><span class="line">  &quot;。&quot;   → 35%    ← 最高</span><br><span class="line">  &quot;咪&quot;   → 8%</span><br><span class="line">  &quot;的&quot;   → 6%</span><br><span class="line">  &quot;and&quot;  → 3%</span><br><span class="line">  ...</span><br><span class="line">模型预测：下一个 token 最可能是 &quot;。&quot;</span><br><span class="line">输出：&quot;我喜欢cat。&quot;</span><br></pre></td></tr></table></figure>
+
+<p>总结整个流程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;TEXT&gt;</span><br><span class="line">文字 → token（切片段）→ ID（查编号）→ 向量（查嵌入矩阵）</span><br><span class="line">→ 过几十层 Transformer（矩阵运算）→ 预测下一个 token</span><br><span class="line">&quot;我喜欢cat&quot;</span><br><span class="line">→ [&quot;我&quot;, &quot;喜欢&quot;, &quot;cat&quot;]</span><br><span class="line">→ [9356, 42871, 2189]</span><br><span class="line">→ [[0.43,...], [0.55,...], [0.91,...]]</span><br><span class="line">→ 96层矩阵运算</span><br><span class="line">→ 下一个词概率分布</span><br><span class="line">→ &quot;。&quot;</span><br></pre></td></tr></table></figure>
+
+<p>这就是大模型干的全部事情：一个超大的、把文字变成数字再反复做矩阵运算的预测机器。</p>
+<blockquote>
+<p>关于token的消耗:<br>你以为你只发了一句话：<br> “请用Python写一个冒泡排序”     ← 7个token</p>
+<p>但实际发给模型的是这些东西拼在一起：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&gt;┌─────────────────────────────────────────────┐</span><br><span class="line">&gt;│ 系统提示词（system prompt）                   │</span><br><span class="line">&gt;│ &quot;你是一个有用的AI助手，你需要...&quot;               │</span><br><span class="line">&gt;│ → 约 200 token                              │</span><br><span class="line">&gt;├────────────────────────────── ──────────────┤</span><br><span class="line">&gt;│ 历史对话（之前聊过的所有内容）                  │</span><br><span class="line">&gt;│ 用户：你好                                   │</span><br><span class="line">&gt;│ AI：你好！有什么可以帮你的？                    │</span><br><span class="line">&gt;│ 用户：我想学Python                            │</span><br><span class="line">&gt;│ AI：好的，Python是一门很棒的语言...             │</span><br><span class="line">&gt;│ → 假设之前聊了 3 轮，约 500 token              │</span><br><span class="line">&gt;├─────────────────────────────────────────────┤</span><br><span class="line">&gt;│ 你这次的提问                                  │</span><br><span class="line">&gt;│ &quot;请用Python写一个冒泡排序&quot;                     │</span><br><span class="line">&gt;│ → 7 token                                   │</span><br><span class="line">&gt;└─────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>实际输入 &#x3D; 200 + 500 + 7 &#x3D; 707 个 token</p>
+<p>这就是为什么聊得越久越费 token<br>因为每次都要把之前所有对话重新发一遍给模型</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/05/06/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9F%BA%E7%A1%80%EF%BC%88pwn%EF%BC%89/" rel="prev" title="二进制基础">
+      <i class="fa fa-chevron-left"></i> 二进制基础
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-NLP"><span class="nav-number">1.</span> <span class="nav-text">第一章 NLP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#NLP-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">NLP 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NLP-%E6%A0%B8%E5%BF%83%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.2.</span> <span class="nav-text">NLP 核心任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%8D%E5%90%91%E9%87%8F"><span class="nav-number">1.3.</span> <span class="nav-text">词向量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Word2Vec-%E9%9D%99%E6%80%81"><span class="nav-number">1.3.1.</span> <span class="nav-text">Word2Vec(静态)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ELMo-%E5%8A%A8%E6%80%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">ELMo (动态)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="nav-number">1.3.3.</span> <span class="nav-text">两种方式对比:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结:</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="JC"
+      src="/images/tou.jpg">
+  <p class="site-author-name" itemprop="name">JC</p>
+  <div class="site-description" itemprop="description">ʕ´•ᴥ• ʔ</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/rjcnb666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;rjcnb666" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:2858052971@qq.com" title="E-Mail → mailto:2858052971@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+ 
+        
+        
+          <!-- 公告模块 -->
+<div class="sidebar-module">
+  <!-- 模块标题 -->
+  <h3 class="sidebar-title">
+    <i class="fa fa-paw"></i> 喵~
+  </h3>
+  <!-- 模块内容 -->
+  <div class="sidebar-content">
+    <p>😊 "当你心情郁闷的时候，用手托腮就好了，手臂会因为帮上忙而开心的。" 😊</p>
+    <p>👉 2858052971@qq.com </p>
+    
+  </div>
+</div>
+        
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":250,"height":250},"mobile":{"show":true}});</script></body>
+</html>
